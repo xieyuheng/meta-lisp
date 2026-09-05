@@ -1,6 +1,7 @@
 import * as S from "@xieyuheng/sexp.js"
 import * as M from "../index.ts"
 import { desugarAnd } from "./desugarAnd.ts"
+import { desugarArray } from "./desugarArray.ts"
 import { desugarBegin } from "./desugarBegin.ts"
 import { desugarChain } from "./desugarChain.ts"
 import { desugarCompose } from "./desugarCompose.ts"
@@ -69,6 +70,10 @@ export function desugar(exp: M.Exp): M.Term {
 
     case "ListExp": {
       return desugar(desugarList(exp.elements, exp.location))
+    }
+
+    case "ArrayExp": {
+      return desugar(desugarArray(exp.elements, exp.location))
     }
 
     case "SetExp": {

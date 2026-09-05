@@ -74,6 +74,8 @@
          clauses)))
     ((list-exp elements location)
      (set-union-many (list-map exp-occurred-names elements)))
+    ((array-exp elements location)
+     (set-union-many (list-map exp-occurred-names elements)))
     ((text-concat-exp elements location)
      (set-union-many (list-map exp-occurred-names elements)))
     ((set-exp elements location)

@@ -28,6 +28,9 @@ export function typeFreeVarTypes(
     case "ListType":
       return typeFreeVarTypes(boundIds, type.elementType)
 
+    case "ArrayType":
+      return typeFreeVarTypes(boundIds, type.elementType)
+
     case "SetType":
       return typeFreeVarTypes(boundIds, type.elementType)
 

@@ -17,6 +17,9 @@ export function typeFreshen(type: M.Type): M.Type {
     case "ListType":
       return M.ListType(typeFreshen(type.elementType))
 
+    case "ArrayType":
+      return M.ArrayType(typeFreshen(type.elementType))
+
     case "SetType":
       return M.SetType(typeFreshen(type.elementType))
 

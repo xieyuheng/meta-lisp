@@ -30,6 +30,7 @@
     ((or-exp exps location) location)
     ((cond-exp clauses location) location)
     ((list-exp elements location) location)
+    ((array-exp elements location) location)
     ((text-concat-exp elements location) location)
     ((set-exp elements location) location)
     ((hash-exp entries location) location)

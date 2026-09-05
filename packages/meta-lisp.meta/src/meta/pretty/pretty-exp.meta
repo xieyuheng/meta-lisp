@@ -99,6 +99,8 @@
        (list-map pretty-cond-clause clauses)))
     ((list-exp elements location)
       (ppml/pretty-list (list-map pretty-exp elements)))
+    ((array-exp elements location)
+      (ppml/pretty-syntax "@array" (@list) (list-map pretty-exp elements)))
     ((text-concat-exp elements location)
      (if (list-is-empty elements)
        (ppml/group (@list (ppml/text "(@text") (ppml/text ")")))

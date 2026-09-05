@@ -36,6 +36,10 @@
      (if (list-is-empty elements)
        "(@list)"
        (@text "(@list " (format-exps elements) ")")))
+    ((array-exp elements location)
+     (if (list-is-empty elements)
+       "(@array)"
+       (@text "(@array " (format-exps elements) ")")))
     ((text-concat-exp elements location)
      (if (list-is-empty elements)
        "(@text)"

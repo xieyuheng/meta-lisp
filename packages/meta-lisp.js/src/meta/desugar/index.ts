@@ -1,5 +1,6 @@
 export * from "./desugar.ts"
 export * from "./desugarAnd.ts"
+export * from "./desugarArray.ts"
 export * from "./desugarBegin.ts"
 export * from "./desugarChain.ts"
 export * from "./desugarCompose.ts"

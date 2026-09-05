@@ -1,4 +1,5 @@
 import {
+  ArrayType,
   AtomType,
   HashType,
   ListType,
@@ -39,6 +40,12 @@ export function setupPrimitive(): void {
   )
   definePrimitiveFunction("列表型", (E: Value) =>
     TypeValue(ListType(asTypeValue(E).type)),
+  )
+  definePrimitiveFunction("array-t", (E: Value) =>
+    TypeValue(ArrayType(asTypeValue(E).type)),
+  )
+  definePrimitiveFunction("数组型", (E: Value) =>
+    TypeValue(ArrayType(asTypeValue(E).type)),
   )
   definePrimitiveFunction("set-t", (E: Value) =>
     TypeValue(SetType(asTypeValue(E).type)),

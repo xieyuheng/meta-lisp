@@ -42,6 +42,10 @@ function occurCheckWithBoundIds(
       return occurCheckWithBoundIds(boundIds, subst, varType, type.elementType)
     }
 
+    case "ArrayType": {
+      return occurCheckWithBoundIds(boundIds, subst, varType, type.elementType)
+    }
+
     case "SetType": {
       return occurCheckWithBoundIds(boundIds, subst, varType, type.elementType)
     }

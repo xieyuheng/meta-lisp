@@ -50,6 +50,11 @@ function substDeepWalkWithBoundIds(
         substDeepWalkWithBoundIds(boundIds, subst, type.elementType),
       )
 
+    case "ArrayType":
+      return M.ArrayType(
+        substDeepWalkWithBoundIds(boundIds, subst, type.elementType),
+      )
+
     case "SetType":
       return M.SetType(
         substDeepWalkWithBoundIds(boundIds, subst, type.elementType),

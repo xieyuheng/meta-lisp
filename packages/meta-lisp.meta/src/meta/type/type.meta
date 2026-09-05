@@ -7,6 +7,7 @@
   (atom-type (name symbol-t))
   (arrow-type (arg-types (list-t type-t)) (ret-type type-t))
   (list-type (element-type type-t))
+  (array-type (element-type type-t))
   (set-type (element-type type-t))
   (hash-type (key-type type-t) (value-type type-t))
   (pair-type (first-type type-t) (second-type type-t))

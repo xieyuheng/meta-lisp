@@ -160,6 +160,13 @@ function prettyType(type: M.Type): Ppml.Node {
       ])
     }
 
+    case "ArrayType": {
+      return Ppml.prettyApplication([
+        Ppml.text("array-t"),
+        prettyType(type.elementType),
+      ])
+    }
+
     case "SetType": {
       return Ppml.prettyApplication([
         Ppml.text("set-t"),

@@ -8,6 +8,7 @@ export type Type =
   | AtomType
   | ArrowType
   | ListType
+  | ArrayType
   | SetType
   | HashType
   | PairType
@@ -133,6 +134,26 @@ export function isListType(type: Type): type is ListType {
 export function asListType(type: Type): ListType {
   if (isListType(type)) return type
   throw new Error(`[asListType] fail on: ${type.kind}`)
+}
+
+// ArrayType
+
+export type ArrayType = {
+  kind: "ArrayType"
+  elementType: Type
+}
+
+export function ArrayType(elementType: Type): ArrayType {
+  return { kind: "ArrayType", elementType }
+}
+
+export function isArrayType(type: Type): type is ArrayType {
+  return type.kind === "ArrayType"
+}
+
+export function asArrayType(type: Type): ArrayType {
+  if (isArrayType(type)) return type
+  throw new Error(`[asArrayType] fail on: ${type.kind}`)
 }
 
 // SetType

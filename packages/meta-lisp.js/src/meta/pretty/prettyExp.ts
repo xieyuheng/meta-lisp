@@ -170,6 +170,10 @@ export function prettyExp(exp: M.Exp): Ppml.Node {
       return Ppml.prettyList(exp.elements.map(prettyExp))
     }
 
+    case "ArrayExp": {
+      return Ppml.prettySyntax("@array", [], exp.elements.map(prettyExp))
+    }
+
     case "TextConcatExp": {
       return Ppml.prettySyntax("@text", [], exp.elements.map(prettyExp))
     }

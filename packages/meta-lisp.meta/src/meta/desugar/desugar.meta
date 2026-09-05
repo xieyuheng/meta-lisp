@@ -38,6 +38,8 @@
      (desugar (desugar-cond clauses location)))
     ((list-exp elements location)
      (desugar (desugar-list elements location)))
+    ((array-exp elements location)
+     (desugar (desugar-array elements location)))
     ((set-exp elements location)
      (desugar (desugar-set elements location)))
     ((text-concat-exp elements location)

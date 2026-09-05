@@ -288,6 +288,14 @@ export const parseExp: S.Router<M.Exp> = S.createRouter<M.Exp>({
     return M.ListExp(S.asListSexp(elements).elements.map(parseExp), location)
   },
 
+  "(cons* '@array elements)": ({ elements }, { location }) => {
+    return M.ArrayExp(S.asListSexp(elements).elements.map(parseExp), location)
+  },
+
+  "(cons* '@数组 elements)": ({ elements }, { location }) => {
+    return M.ArrayExp(S.asListSexp(elements).elements.map(parseExp), location)
+  },
+
   "(cons* '@text elements)": ({ elements }, { location }) => {
     return M.TextConcatExp(
       S.asListSexp(elements).elements.map(parseExp),

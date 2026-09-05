@@ -17,12 +17,14 @@
     (lambda (package-name module-names)
       (for-list module-names
         (lambda (module-name)
-          (list-push-front
-            (import-all-stmt
-              (text-to-symbol package-name)
-              (text-to-symbol module-name)
-              (zero-location (fragment-path fragment)))
-            (fragment-stmts fragment)))))))
+          (fragment-put-stmts
+            (cons
+              (import-all-stmt
+                (text-to-symbol package-name)
+                (text-to-symbol module-name)
+                (zero-location (fragment-path fragment)))
+              (fragment-stmts fragment))
+            fragment))))))
 
 (define (zero-location path)
   (make-source-location

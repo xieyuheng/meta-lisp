@@ -30,6 +30,12 @@
     (define-primitive-function '列表型
       (lambda (args)
         (type-value (list-type (type-value-type (list-first args))))))
+    (define-primitive-function 'array-t
+      (lambda (args)
+        (type-value (array-type (type-value-type (list-first args))))))
+    (define-primitive-function '数组型
+      (lambda (args)
+        (type-value (array-type (type-value-type (list-first args))))))
     (define-primitive-function 'set-t
       (lambda (args)
         (type-value (set-type (type-value-type (list-first args))))))

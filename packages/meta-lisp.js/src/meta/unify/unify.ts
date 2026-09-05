@@ -68,6 +68,10 @@ export function unify(
     return unify(subst, lhs.elementType, rhs.elementType)
   }
 
+  if (M.isArrayType(lhs) && M.isArrayType(rhs)) {
+    return unify(subst, lhs.elementType, rhs.elementType)
+  }
+
   if (M.isSetType(lhs) && M.isSetType(rhs)) {
     return unify(subst, lhs.elementType, rhs.elementType)
   }

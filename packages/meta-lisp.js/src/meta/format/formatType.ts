@@ -42,6 +42,11 @@ export function formatType(type: M.Type): string {
       return `(list-t ${elementType})`
     }
 
+    case "ArrayType": {
+      const elementType = formatType(type.elementType)
+      return `(array-t ${elementType})`
+    }
+
     case "SetType": {
       const elementType = formatType(type.elementType)
       return `(set-t ${elementType})`

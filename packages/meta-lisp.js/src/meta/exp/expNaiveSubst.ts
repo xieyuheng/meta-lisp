@@ -220,6 +220,13 @@ export function expNaiveSubst(exp: M.Exp, name: string, rhs: M.Exp): M.Exp {
       )
     }
 
+    case "ArrayExp": {
+      return M.ArrayExp(
+        exp.elements.map((e) => expNaiveSubst(e, name, rhs)),
+        exp.location,
+      )
+    }
+
     case "TextConcatExp": {
       return M.TextConcatExp(
         exp.elements.map((e) => expNaiveSubst(e, name, rhs)),

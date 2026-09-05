@@ -178,6 +178,16 @@ export function formatExp(exp: M.Exp): string {
       }
     }
 
+    case "ArrayExp": {
+      const elements = formatExps(exp.elements)
+
+      if (elements === "") {
+        return `(@array)`
+      } else {
+        return `(@array ${elements})`
+      }
+    }
+
     case "TextConcatExp": {
       const elements = formatExps(exp.elements)
       if (elements === "") {

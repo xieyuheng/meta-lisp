@@ -121,6 +121,8 @@
          (ppml/pretty-application (just "->") (cons (ppml/text "->") (list-append arg-nodes (@list (pretty-type ret-type))))))))
     ((list-type element-type)
      (ppml/pretty-application (just "list-t") (@list (ppml/text "list-t") (pretty-type element-type))))
+    ((array-type element-type)
+     (ppml/pretty-application (just "array-t") (@list (ppml/text "array-t") (pretty-type element-type))))
     ((set-type element-type)
      (ppml/pretty-application (just "set-t") (@list (ppml/text "set-t") (pretty-type element-type))))
     ((hash-type key-type value-type)

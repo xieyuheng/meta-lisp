@@ -5,13 +5,13 @@
       outcome-t))
 
 (define (claim-pass package)
-  (let ((outcomes (make-list)))
+  (let ((outcomes (make-array)))
     (for-hash-value (package-mods package)
       (lambda (mod)
         (for-hash (mod-claimed mod)
           (lambda (name entry)
-            (list-push (setup-claimed-type mod name entry) outcomes)))))
-    (outcome-conj outcomes)))
+            (array-push (setup-claimed-type mod name entry) outcomes)))))
+    (outcome-conj (array-to-list outcomes))))
 
 (define (setup-claimed-type mod name entry)
   (cond ((or (set-member name (mod-admitted mod))

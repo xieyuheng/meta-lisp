@@ -16,6 +16,8 @@
        (@text "(-> " args-str " " (format-type ret-type) ")")))
     ((list-type element-type)
      (@text "(list-t " (format-type element-type) ")"))
+    ((array-type element-type)
+     (@text "(array-t " (format-type element-type) ")"))
     ((set-type element-type)
      (@text "(set-t " (format-type element-type) ")"))
     ((hash-type key-type value-type)
