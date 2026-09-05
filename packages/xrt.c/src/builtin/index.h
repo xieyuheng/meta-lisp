@@ -10,6 +10,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "array.h"
+#include "pair.h"
 #include "hash.h"
 #include "set.h"
 #include "random.h"
