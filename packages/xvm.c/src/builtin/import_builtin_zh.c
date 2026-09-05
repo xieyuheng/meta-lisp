@@ -54,8 +54,8 @@ void import_builtin_zh(program_t *program) {
 
   // void
 
-  define_variable(program, "meta-builtin/内置/空", x_void);
-  define_primitive_1(program, "meta-builtin/内置/为空", x_is_void);
+  define_variable(program, "meta-builtin/内置/空值", x_void);
+  define_primitive_1(program, "meta-builtin/内置/为空值", x_is_void);
 
   // type
 
@@ -66,7 +66,7 @@ void import_builtin_zh(program_t *program) {
   define_variable_primitive_0(program, "meta-builtin/内置/文本型", x_text_t);
   define_variable_primitive_0(program, "meta-builtin/内置/符号型", x_symbol_t);
   define_variable_primitive_0(program, "meta-builtin/内置/真假型", x_bool_t);
-  define_variable_primitive_0(program, "meta-builtin/内置/空型", x_void_t);
+  define_variable_primitive_0(program, "meta-builtin/内置/空值型", x_void_t);
   define_variable_primitive_0(program, "meta-builtin/内置/文件型", x_file_t);
   define_primitive_1(program, "meta-builtin/内置/列表型", x_list_t);
   define_primitive_1(program, "meta-builtin/内置/数组型", x_array_t);
