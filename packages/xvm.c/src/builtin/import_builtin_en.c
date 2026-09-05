@@ -69,6 +69,7 @@ void import_builtin_en(program_t *program) {
   define_variable_primitive_0(program, "meta-builtin/builtin/void-t", x_void_t);
   define_variable_primitive_0(program, "meta-builtin/builtin/file-t", x_file_t);
   define_primitive_1(program, "meta-builtin/builtin/list-t", x_list_t);
+  define_primitive_1(program, "meta-builtin/builtin/array-t", x_array_t);
   define_primitive_1(program, "meta-builtin/builtin/set-t", x_set_t);
   define_primitive_2(program, "meta-builtin/builtin/hash-t", x_hash_t);
   define_primitive_2(program, "meta-builtin/builtin/pair-t", x_pair_t);
@@ -177,6 +178,23 @@ void import_builtin_en(program_t *program) {
   define_primitive_1(program, "meta-builtin/builtin/list-reverse", x_list_reverse_mut);
   define_primitive_1(program, "meta-builtin/builtin/list-copy-reverse", x_list_reverse);
   define_primitive_1(program, "meta-builtin/builtin/list-to-set", x_list_to_set);
+
+  // array
+
+  define_primitive_0(program, "meta-builtin/builtin/make-array", x_make_array);
+  define_primitive_1(program, "meta-builtin/builtin/is-array", x_is_any_array);
+  define_primitive_1(program, "meta-builtin/builtin/array-copy", x_array_copy);
+  define_primitive_1(program, "meta-builtin/builtin/array-length", x_array_length);
+  define_primitive_1(program, "meta-builtin/builtin/array-is-empty", x_array_is_empty);
+  define_primitive_1(program, "meta-builtin/builtin/array-pop", x_array_pop_mut);
+  define_primitive_2(program, "meta-builtin/builtin/array-push", x_array_push_mut);
+  define_primitive_1(program, "meta-builtin/builtin/array-pop-front", x_array_pop_front_mut);
+  define_primitive_2(program, "meta-builtin/builtin/array-push-front", x_array_push_front_mut);
+  define_primitive_2(program, "meta-builtin/builtin/array-get", x_array_get);
+  define_primitive_3(program, "meta-builtin/builtin/array-put", x_array_put_mut);
+  define_primitive_1(program, "meta-builtin/builtin/array-reverse", x_array_reverse_mut);
+  define_primitive_1(program, "meta-builtin/builtin/array-to-list", x_array_to_list);
+  define_primitive_1(program, "meta-builtin/builtin/list-to-array", x_list_to_array);
 
   // pair
 

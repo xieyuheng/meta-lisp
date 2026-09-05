@@ -33,6 +33,8 @@ typedef struct symbol_t symbol_t;
 typedef struct xtext_t xtext_t;
 typedef struct xlist_t xlist_t;
 typedef struct xlist_child_iter_t xlist_child_iter_t;
+typedef struct xarray_t xarray_t;
+typedef struct xarray_child_iter_t xarray_child_iter_t;
 typedef struct xhash_t xhash_t;
 typedef struct xhash_child_iter_t xhash_child_iter_t;
 typedef struct xset_t xset_t;

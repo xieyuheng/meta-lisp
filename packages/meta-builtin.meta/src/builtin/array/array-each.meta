@@ -1,0 +1,30 @@
+(module builtin)
+
+(claim array-each
+  (all (A Any)
+    (-> (-> A Any) (array-t A)
+        void-t)))
+
+(define (array-each f array)
+  (array-each-aux f array 0))
+
+(claim array-each-aux
+  (all (A Any)
+    (-> (-> A Any) (array-t A) int-t
+        void-t)))
+
+(define (array-each-aux f array i)
+  (if (int-greater-or-equal i (array-length array))
+    void
+    (begin
+      (f (array-get i array))
+      (array-each-aux f array (iadd i 1)))))
+
+(define-test array-each-test
+  (let ((a (list-to-array (@list 1 2 3)))
+        (acc (make-array)))
+    (array-each
+      (lambda (x)
+        (array-push x acc))
+      a)
+    (assert-equal (@list 1 2 3) (array-to-list acc))))

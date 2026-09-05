@@ -69,6 +69,7 @@ void import_builtin_zh(program_t *program) {
   define_variable_primitive_0(program, "meta-builtin/内置/空型", x_void_t);
   define_variable_primitive_0(program, "meta-builtin/内置/文件型", x_file_t);
   define_primitive_1(program, "meta-builtin/内置/列表型", x_list_t);
+  define_primitive_1(program, "meta-builtin/内置/数组型", x_array_t);
   define_primitive_1(program, "meta-builtin/内置/集合型", x_set_t);
   define_primitive_2(program, "meta-builtin/内置/散列型", x_hash_t);
   define_primitive_2(program, "meta-builtin/内置/序对型", x_pair_t);
@@ -177,6 +178,23 @@ void import_builtin_zh(program_t *program) {
   define_primitive_1(program, "meta-builtin/内置/列表反转", x_list_reverse_mut);
   define_primitive_1(program, "meta-builtin/内置/列表复制反转", x_list_reverse);
   define_primitive_1(program, "meta-builtin/内置/列表转集合", x_list_to_set);
+
+  // array
+
+  define_primitive_0(program, "meta-builtin/内置/作数组", x_make_array);
+  define_primitive_1(program, "meta-builtin/内置/为数组", x_is_any_array);
+  define_primitive_1(program, "meta-builtin/内置/数组复制", x_array_copy);
+  define_primitive_1(program, "meta-builtin/内置/数组长度", x_array_length);
+  define_primitive_1(program, "meta-builtin/内置/数组为空", x_array_is_empty);
+  define_primitive_1(program, "meta-builtin/内置/数组末出", x_array_pop_mut);
+  define_primitive_2(program, "meta-builtin/内置/数组末入", x_array_push_mut);
+  define_primitive_1(program, "meta-builtin/内置/数组首出", x_array_pop_front_mut);
+  define_primitive_2(program, "meta-builtin/内置/数组首入", x_array_push_front_mut);
+  define_primitive_2(program, "meta-builtin/内置/数组取", x_array_get);
+  define_primitive_3(program, "meta-builtin/内置/数组存", x_array_put_mut);
+  define_primitive_1(program, "meta-builtin/内置/数组反转", x_array_reverse_mut);
+  define_primitive_1(program, "meta-builtin/内置/数组转列表", x_array_to_list);
+  define_primitive_1(program, "meta-builtin/内置/列表转数组", x_list_to_array);
 
   // pair
 

@@ -66,6 +66,13 @@ value_t x_list_t(value_t E) {
   return type;
 }
 
+value_t x_array_t(value_t E) {
+  value_t type = x_make_list();
+  x_list_push_mut(x_object(intern_symbol("array")), type);
+  x_list_push_mut(E, type);
+  return type;
+}
+
 value_t x_set_t(value_t E) {
   value_t type = x_make_list();
   x_list_push_mut(x_object(intern_symbol("set")), type);
