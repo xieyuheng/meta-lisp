@@ -11,43 +11,43 @@
 
 (admit nil (all (E) (-> (my-list-t E))))
 
-(define (nil) (@list 'nil))
+(define (nil) (@array 'nil))
 
 (admit is-nil (all (E) (-> (my-list-t E) meta-builtin/builtin/bool-t)))
 
 (define (is-nil value)
-  (and (meta-builtin/builtin/is-list value)
-       (meta-builtin/builtin/equal (meta-builtin/builtin/list-length value) 1)
-       (meta-builtin/builtin/equal (meta-builtin/builtin/list-head value) 'nil)))
+  (and (meta-builtin/builtin/is-array value)
+       (meta-builtin/builtin/equal (meta-builtin/builtin/array-length value) 1)
+       (meta-builtin/builtin/equal (meta-builtin/builtin/array-get 0 value) 'nil)))
 
 (admit li (all (E) (-> E (my-list-t E) (my-list-t E))))
 
-(define (li head tail) (@list 'li head tail))
+(define (li head tail) (@array 'li head tail))
 
 (admit is-li (all (E) (-> (my-list-t E) meta-builtin/builtin/bool-t)))
 
 (define (is-li value)
-  (and (meta-builtin/builtin/is-list value)
-       (meta-builtin/builtin/equal (meta-builtin/builtin/list-length value) 3)
-       (meta-builtin/builtin/equal (meta-builtin/builtin/list-head value) 'li)))
+  (and (meta-builtin/builtin/is-array value)
+       (meta-builtin/builtin/equal (meta-builtin/builtin/array-length value) 3)
+       (meta-builtin/builtin/equal (meta-builtin/builtin/array-get 0 value) 'li)))
 
 (admit li-head (all (E) (-> (my-list-t E) E)))
 
-(define (li-head target) (meta-builtin/builtin/list-get 1 target))
+(define (li-head target) (meta-builtin/builtin/array-get 1 target))
 
 (admit li-put-head (all (E) (-> E (my-list-t E) (my-list-t E))))
 
 (define (li-put-head value target)
-  (begin (meta-builtin/builtin/list-put 1 value target) target))
+  (begin (meta-builtin/builtin/array-put 1 value target) target))
 
 (admit li-tail (all (E) (-> (my-list-t E) (my-list-t E))))
 
-(define (li-tail target) (meta-builtin/builtin/list-get 2 target))
+(define (li-tail target) (meta-builtin/builtin/array-get 2 target))
 
 (admit li-put-tail (all (E) (-> (my-list-t E) (my-list-t E) (my-list-t E))))
 
 (define (li-put-tail value target)
-  (begin (meta-builtin/builtin/list-put 2 value target) target))
+  (begin (meta-builtin/builtin/array-put 2 value target) target))
 
 (define (my-list-head list)
   (cond

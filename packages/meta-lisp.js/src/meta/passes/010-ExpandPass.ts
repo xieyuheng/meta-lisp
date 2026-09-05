@@ -193,7 +193,7 @@ function expandConstructor(
     M.DefineFunctionStmt(
       ctor.name,
       parameters,
-      M.ListExp(
+      M.ArrayExp(
         [M.SymbolExp(ctor.name, ctor.location), ...args],
         ctor.location,
       ),
@@ -233,7 +233,7 @@ function expandPredicate(
             M.QualifiedVarExp(
               "meta-builtin",
               "builtin",
-              "is-list",
+              "is-array",
               ctor.location,
             ),
             [M.VarExp("value", ctor.location)],
@@ -251,7 +251,7 @@ function expandPredicate(
                 M.QualifiedVarExp(
                   "meta-builtin",
                   "builtin",
-                  "list-length",
+                  "array-length",
                   ctor.location,
                 ),
                 [M.VarExp("value", ctor.location)],
@@ -273,10 +273,13 @@ function expandPredicate(
                 M.QualifiedVarExp(
                   "meta-builtin",
                   "builtin",
-                  "list-head",
+                  "array-get",
                   ctor.location,
                 ),
-                [M.VarExp("value", ctor.location)],
+                [
+                  M.IntExp(BigInt(0), ctor.location),
+                  M.VarExp("value", ctor.location),
+                ],
                 ctor.location,
               ),
               M.SymbolExp(ctor.name, ctor.location),
@@ -318,7 +321,7 @@ function expandAccessor(
         M.QualifiedVarExp(
           "meta-builtin",
           "builtin",
-          "list-get",
+          "array-get",
           field.location,
         ),
         [
@@ -367,7 +370,7 @@ function expandModifier(
             M.QualifiedVarExp(
               "meta-builtin",
               "builtin",
-              "list-put",
+              "array-put",
               field.location,
             ),
             [

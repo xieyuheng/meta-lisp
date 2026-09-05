@@ -195,7 +195,7 @@
       (define-function-stmt
         name
         (list-map explicit-data-field-name fields)
-        (list-exp
+        (array-exp
           (cons (symbol-exp name location)
                 (list-map
                   (lambda (field)
@@ -224,15 +224,15 @@
         predicate-name
         (@list 'value)
         (and-exp
-          (@list (apply-exp (qualified-var-exp 'meta-builtin 'builtin 'is-list location) (@list (var-exp 'value location)) location)
+          (@list (apply-exp (qualified-var-exp 'meta-builtin 'builtin 'is-array location) (@list (var-exp 'value location)) location)
            (apply-exp
              (qualified-var-exp 'meta-builtin 'builtin 'equal location)
-             (@list (apply-exp (qualified-var-exp 'meta-builtin 'builtin 'list-length location) (@list (var-exp 'value location)) location)
+             (@list (apply-exp (qualified-var-exp 'meta-builtin 'builtin 'array-length location) (@list (var-exp 'value location)) location)
               (int-exp (iadd (list-length fields) 1) location))
              location)
            (apply-exp
              (qualified-var-exp 'meta-builtin 'builtin 'equal location)
-             (@list (apply-exp (qualified-var-exp 'meta-builtin 'builtin 'list-head location) (@list (var-exp 'value location)) location)
+             (@list (apply-exp (qualified-var-exp 'meta-builtin 'builtin 'array-get location) (@list (int-exp 0 location) (var-exp 'value location)) location)
               (symbol-exp name location))
              location))
           location)
@@ -258,7 +258,7 @@
           accessor-name
           (@list 'target)
           (apply-exp
-            (qualified-var-exp 'meta-builtin 'builtin 'list-get location)
+            (qualified-var-exp 'meta-builtin 'builtin 'array-get location)
             (@list (int-exp (iadd index 1) location)
              (var-exp 'target location))
             location)
@@ -288,7 +288,7 @@
               (@list 'value 'target)
               (begin-exp
                 (@list (apply-exp
-                   (qualified-var-exp 'meta-builtin 'builtin 'list-put location)
+                   (qualified-var-exp 'meta-builtin 'builtin 'array-put location)
                    (@list (int-exp (iadd index 1) location)
                     (var-exp 'value location)
                     (var-exp 'target location))

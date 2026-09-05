@@ -7,55 +7,55 @@ static value_t parse_object(list_t *tokens);
 // constructors
 
 value_t make_json_null(void) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("null-json")));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("null-json")));
   return v;
 }
 
 value_t make_json_bool(bool b) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("bool-json")));
-  xlist_push(to_xlist(v), x_bool(b));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("bool-json")));
+  xarray_push(to_xarray(v), x_bool(b));
   return v;
 }
 
 value_t make_json_number(double x) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("number-json")));
-  xlist_push(to_xlist(v), x_float(x));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("number-json")));
+  xarray_push(to_xarray(v), x_float(x));
   return v;
 }
 
 value_t make_json_string(const char *s) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("text-json")));
-  xlist_push(to_xlist(v), x_object(make_static_xtext(s)));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("text-json")));
+  xarray_push(to_xarray(v), x_object(make_static_xtext(s)));
   return v;
 }
 
 value_t make_json_array(void) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("array-json")));
-  xlist_push(to_xlist(v), x_object(make_xlist()));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("array-json")));
+  xarray_push(to_xarray(v), x_object(make_xlist()));
   return v;
 }
 
 void json_array_push(value_t array, value_t element) {
-  xlist_t *xs = to_xlist(array);
-  xlist_t *elements = to_xlist(xlist_get(xs, 1));
+  xarray_t *xs = to_xarray(array);
+  xlist_t *elements = to_xlist(xarray_get(xs, 1));
   xlist_push(elements, element);
 }
 
 value_t make_json_object(void) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("object-json")));
-  xlist_push(to_xlist(v), x_object(make_xhash()));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("object-json")));
+  xarray_push(to_xarray(v), x_object(make_xhash()));
   return v;
 }
 
 void json_object_put(value_t object, const char *key, value_t value) {
-  xlist_t *xs = to_xlist(object);
-  xhash_t *hash = to_xhash(xlist_get(xs, 1));
+  xarray_t *xs = to_xarray(object);
+  xhash_t *hash = to_xhash(xarray_get(xs, 1));
   xhash_put(hash, x_object(make_static_xtext(key)), value);
 }
 
@@ -261,32 +261,32 @@ void write_json(buffer_t *buffer, value_t json) {
 }
 
 static void write_json_value(buffer_t *buffer, value_t json) {
-  assert(is_xlist(json));
-  xlist_t *xs = to_xlist(json);
+  assert(is_xarray(json));
+  xarray_t *xs = to_xarray(json);
   assert(!array_is_empty(xs->elements));
 
-  value_t tag_value = xlist_get(xs, 0);
+  value_t tag_value = xarray_get(xs, 0);
   assert(is_symbol(tag_value));
   const char *tag = symbol_string(to_symbol(tag_value));
 
   if (string_equal(tag, "null-json")) {
     write_string(buffer, "null");
   } else if (string_equal(tag, "bool-json")) {
-    value_t b = xlist_get(xs, 1);
+    value_t b = xarray_get(xs, 1);
     write_string(buffer, is_true(b) ? "true" : "false");
   } else if (string_equal(tag, "number-json")) {
-    value_t n = xlist_get(xs, 1);
+    value_t n = xarray_get(xs, 1);
     if (is_float(n)) {
       write_atom(buffer, n);
     } else {
       write_template(buffer, "%ld", to_int64(n));
     }
   } else if (string_equal(tag, "text-json")) {
-    value_t s = xlist_get(xs, 1);
+    value_t s = xarray_get(xs, 1);
     write_json_string_escaped(buffer, xtext_string(to_xtext(s)));
   } else if (string_equal(tag, "array-json")) {
     write_string(buffer, "[");
-    value_t elements = xlist_get(xs, 1);
+    value_t elements = xarray_get(xs, 1);
     xlist_t *elems = to_xlist(elements);
     for (size_t i = 0; i < array_length(elems->elements); i++) {
       if (i > 0) write_string(buffer, ", ");
@@ -295,7 +295,7 @@ static void write_json_value(buffer_t *buffer, value_t json) {
     write_string(buffer, "]");
   } else if (string_equal(tag, "object-json")) {
     write_string(buffer, "{");
-    value_t entries = xlist_get(xs, 1);
+    value_t entries = xarray_get(xs, 1);
     xhash_t *hash = to_xhash(entries);
     hash_iter_t iter;
     hash_iter_init(&iter, hash->hash);

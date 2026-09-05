@@ -2,44 +2,44 @@
 
 // ── Chinese constructors ──
 
-static value_t make_json_null_zh(void) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("空结森")));
+value_t make_json_null_zh(void) {
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("空结森")));
   return v;
 }
 
 static value_t make_json_bool_zh(bool b) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("真假结森")));
-  xlist_push(to_xlist(v), x_bool(b));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("真假结森")));
+  xarray_push(to_xarray(v), x_bool(b));
   return v;
 }
 
 static value_t make_json_number_zh(double x) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("数字结森")));
-  xlist_push(to_xlist(v), x_float(x));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("数字结森")));
+  xarray_push(to_xarray(v), x_float(x));
   return v;
 }
 
 static value_t make_json_string_zh(const char *s) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("文本结森")));
-  xlist_push(to_xlist(v), x_object(make_static_xtext(s)));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("文本结森")));
+  xarray_push(to_xarray(v), x_object(make_static_xtext(s)));
   return v;
 }
 
 static value_t make_json_array_zh(void) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("数组结森")));
-  xlist_push(to_xlist(v), x_object(make_xlist()));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("数组结森")));
+  xarray_push(to_xarray(v), x_object(make_xlist()));
   return v;
 }
 
 static value_t make_json_object_zh(void) {
-  value_t v = x_object(make_xlist());
-  xlist_push(to_xlist(v), x_object(intern_symbol("对象结森")));
-  xlist_push(to_xlist(v), x_object(make_xhash()));
+  value_t v = x_object(make_xarray());
+  xarray_push(to_xarray(v), x_object(intern_symbol("对象结森")));
+  xarray_push(to_xarray(v), x_object(make_xhash()));
   return v;
 }
 
@@ -210,32 +210,32 @@ void write_json_zh(buffer_t *buffer, value_t json) {
 }
 
 static void write_json_value_zh(buffer_t *buffer, value_t json) {
-  assert(is_xlist(json));
-  xlist_t *xs = to_xlist(json);
+  assert(is_xarray(json));
+  xarray_t *xs = to_xarray(json);
   assert(!array_is_empty(xs->elements));
 
-  value_t tag_value = xlist_get(xs, 0);
+  value_t tag_value = xarray_get(xs, 0);
   assert(is_symbol(tag_value));
   const char *tag = symbol_string(to_symbol(tag_value));
 
   if (string_equal(tag, "空结森")) {
     write_string(buffer, "null");
   } else if (string_equal(tag, "真假结森")) {
-    value_t b = xlist_get(xs, 1);
+    value_t b = xarray_get(xs, 1);
     write_string(buffer, is_true(b) ? "true" : "false");
   } else if (string_equal(tag, "数字结森")) {
-    value_t n = xlist_get(xs, 1);
+    value_t n = xarray_get(xs, 1);
     if (is_float(n)) {
       write_atom(buffer, n);
     } else {
       write_template(buffer, "%ld", to_int64(n));
     }
   } else if (string_equal(tag, "文本结森")) {
-    value_t s = xlist_get(xs, 1);
+    value_t s = xarray_get(xs, 1);
     write_json_string_escaped(buffer, xtext_string(to_xtext(s)));
   } else if (string_equal(tag, "数组结森")) {
     write_string(buffer, "[");
-    value_t elements = xlist_get(xs, 1);
+    value_t elements = xarray_get(xs, 1);
     xlist_t *elems = to_xlist(elements);
     for (size_t i = 0; i < array_length(elems->elements); i++) {
       if (i > 0) write_string(buffer, ", ");
@@ -244,7 +244,7 @@ static void write_json_value_zh(buffer_t *buffer, value_t json) {
     write_string(buffer, "]");
   } else if (string_equal(tag, "对象结森")) {
     write_string(buffer, "{");
-    value_t entries = xlist_get(xs, 1);
+    value_t entries = xarray_get(xs, 1);
     xhash_t *hash = to_xhash(entries);
     hash_iter_t iter;
     hash_iter_init(&iter, hash->hash);

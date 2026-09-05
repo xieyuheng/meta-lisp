@@ -1,106 +1,111 @@
 (define (var-term name)
-  (meta-builtin/builtin/cons
-   var-term
-   (meta-builtin/builtin/cons name (meta-builtin/builtin/make-list))))
+  (let ((array (meta-builtin/builtin/make-array)))
+    (begin
+      (meta-builtin/builtin/array-push var-term array)
+      (begin (meta-builtin/builtin/array-push name array) array))))
 
 (define (is-var-term value)
-  (if (meta-builtin/builtin/is-list value)
-    (if (meta-builtin/builtin/equal (meta-builtin/builtin/list-length value) 2)
+  (if (meta-builtin/builtin/is-array value)
+    (if (meta-builtin/builtin/equal (meta-builtin/builtin/array-length value) 2)
       (meta-builtin/builtin/equal
-       (meta-builtin/builtin/list-head value)
+       (meta-builtin/builtin/array-get 0 value)
        var-term)
       meta-builtin/builtin/false)
     meta-builtin/builtin/false))
 
-(define (var-term-name target) (meta-builtin/builtin/list-get 1 target))
+(define (var-term-name target) (meta-builtin/builtin/array-get 1 target))
 
 (define (var-term-put-name value target)
-  (begin (meta-builtin/builtin/list-put 1 value target) target))
+  (begin (meta-builtin/builtin/array-put 1 value target) target))
 
 (define (apply-term target arg)
-  (meta-builtin/builtin/cons
-   apply-term
-   (meta-builtin/builtin/cons
-    target
-    (meta-builtin/builtin/cons arg (meta-builtin/builtin/make-list)))))
+  (let ((array (meta-builtin/builtin/make-array)))
+    (begin
+      (meta-builtin/builtin/array-push apply-term array)
+      (begin
+        (meta-builtin/builtin/array-push target array)
+        (begin (meta-builtin/builtin/array-push arg array) array)))))
 
 (define (is-apply-term value)
-  (if (meta-builtin/builtin/is-list value)
-    (if (meta-builtin/builtin/equal (meta-builtin/builtin/list-length value) 3)
+  (if (meta-builtin/builtin/is-array value)
+    (if (meta-builtin/builtin/equal (meta-builtin/builtin/array-length value) 3)
       (meta-builtin/builtin/equal
-       (meta-builtin/builtin/list-head value)
+       (meta-builtin/builtin/array-get 0 value)
        apply-term)
       meta-builtin/builtin/false)
     meta-builtin/builtin/false))
 
-(define (apply-term-target target) (meta-builtin/builtin/list-get 1 target))
+(define (apply-term-target target) (meta-builtin/builtin/array-get 1 target))
 
 (define (apply-term-put-target value target)
-  (begin (meta-builtin/builtin/list-put 1 value target) target))
+  (begin (meta-builtin/builtin/array-put 1 value target) target))
 
-(define (apply-term-arg target) (meta-builtin/builtin/list-get 2 target))
+(define (apply-term-arg target) (meta-builtin/builtin/array-get 2 target))
 
 (define (apply-term-put-arg value target)
-  (begin (meta-builtin/builtin/list-put 2 value target) target))
+  (begin (meta-builtin/builtin/array-put 2 value target) target))
 
 (define (lambda-term parameter body)
-  (meta-builtin/builtin/cons
-   lambda-term
-   (meta-builtin/builtin/cons
-    parameter
-    (meta-builtin/builtin/cons body (meta-builtin/builtin/make-list)))))
+  (let ((array (meta-builtin/builtin/make-array)))
+    (begin
+      (meta-builtin/builtin/array-push lambda-term array)
+      (begin
+        (meta-builtin/builtin/array-push parameter array)
+        (begin (meta-builtin/builtin/array-push body array) array)))))
 
 (define (is-lambda-term value)
-  (if (meta-builtin/builtin/is-list value)
-    (if (meta-builtin/builtin/equal (meta-builtin/builtin/list-length value) 3)
+  (if (meta-builtin/builtin/is-array value)
+    (if (meta-builtin/builtin/equal (meta-builtin/builtin/array-length value) 3)
       (meta-builtin/builtin/equal
-       (meta-builtin/builtin/list-head value)
+       (meta-builtin/builtin/array-get 0 value)
        lambda-term)
       meta-builtin/builtin/false)
     meta-builtin/builtin/false))
 
-(define (lambda-term-parameter target) (meta-builtin/builtin/list-get 1 target))
+(define (lambda-term-parameter target)
+  (meta-builtin/builtin/array-get 1 target))
 
 (define (lambda-term-put-parameter value target)
-  (begin (meta-builtin/builtin/list-put 1 value target) target))
+  (begin (meta-builtin/builtin/array-put 1 value target) target))
 
-(define (lambda-term-body target) (meta-builtin/builtin/list-get 2 target))
+(define (lambda-term-body target) (meta-builtin/builtin/array-get 2 target))
 
 (define (lambda-term-put-body value target)
-  (begin (meta-builtin/builtin/list-put 2 value target) target))
+  (begin (meta-builtin/builtin/array-put 2 value target) target))
 
 (define (let-term name rhs body)
-  (meta-builtin/builtin/cons
-   let-term
-   (meta-builtin/builtin/cons
-    name
-    (meta-builtin/builtin/cons
-     rhs
-     (meta-builtin/builtin/cons body (meta-builtin/builtin/make-list))))))
+  (let ((array (meta-builtin/builtin/make-array)))
+    (begin
+      (meta-builtin/builtin/array-push let-term array)
+      (begin
+        (meta-builtin/builtin/array-push name array)
+        (begin
+          (meta-builtin/builtin/array-push rhs array)
+          (begin (meta-builtin/builtin/array-push body array) array))))))
 
 (define (is-let-term value)
-  (if (meta-builtin/builtin/is-list value)
-    (if (meta-builtin/builtin/equal (meta-builtin/builtin/list-length value) 4)
+  (if (meta-builtin/builtin/is-array value)
+    (if (meta-builtin/builtin/equal (meta-builtin/builtin/array-length value) 4)
       (meta-builtin/builtin/equal
-       (meta-builtin/builtin/list-head value)
+       (meta-builtin/builtin/array-get 0 value)
        let-term)
       meta-builtin/builtin/false)
     meta-builtin/builtin/false))
 
-(define (let-term-name target) (meta-builtin/builtin/list-get 1 target))
+(define (let-term-name target) (meta-builtin/builtin/array-get 1 target))
 
 (define (let-term-put-name value target)
-  (begin (meta-builtin/builtin/list-put 1 value target) target))
+  (begin (meta-builtin/builtin/array-put 1 value target) target))
 
-(define (let-term-rhs target) (meta-builtin/builtin/list-get 2 target))
+(define (let-term-rhs target) (meta-builtin/builtin/array-get 2 target))
 
 (define (let-term-put-rhs value target)
-  (begin (meta-builtin/builtin/list-put 2 value target) target))
+  (begin (meta-builtin/builtin/array-put 2 value target) target))
 
-(define (let-term-body target) (meta-builtin/builtin/list-get 3 target))
+(define (let-term-body target) (meta-builtin/builtin/array-get 3 target))
 
 (define (let-term-put-body value target)
-  (begin (meta-builtin/builtin/list-put 3 value target) target))
+  (begin (meta-builtin/builtin/array-put 3 value target) target))
 
 (define empty-env meta-builtin/builtin/make-hash)
 
@@ -109,38 +114,39 @@
 (define env-lookup meta-builtin/builtin/hash-get-maybe)
 
 (define (closure-value env parameter body)
-  (meta-builtin/builtin/cons
-   closure-value
-   (meta-builtin/builtin/cons
-    env
-    (meta-builtin/builtin/cons
-     parameter
-     (meta-builtin/builtin/cons body (meta-builtin/builtin/make-list))))))
+  (let ((array (meta-builtin/builtin/make-array)))
+    (begin
+      (meta-builtin/builtin/array-push closure-value array)
+      (begin
+        (meta-builtin/builtin/array-push env array)
+        (begin
+          (meta-builtin/builtin/array-push parameter array)
+          (begin (meta-builtin/builtin/array-push body array) array))))))
 
 (define (is-closure-value value)
-  (if (meta-builtin/builtin/is-list value)
-    (if (meta-builtin/builtin/equal (meta-builtin/builtin/list-length value) 4)
+  (if (meta-builtin/builtin/is-array value)
+    (if (meta-builtin/builtin/equal (meta-builtin/builtin/array-length value) 4)
       (meta-builtin/builtin/equal
-       (meta-builtin/builtin/list-head value)
+       (meta-builtin/builtin/array-get 0 value)
        closure-value)
       meta-builtin/builtin/false)
     meta-builtin/builtin/false))
 
-(define (closure-value-env target) (meta-builtin/builtin/list-get 1 target))
+(define (closure-value-env target) (meta-builtin/builtin/array-get 1 target))
 
 (define (closure-value-put-env value target)
-  (begin (meta-builtin/builtin/list-put 1 value target) target))
+  (begin (meta-builtin/builtin/array-put 1 value target) target))
 
 (define (closure-value-parameter target)
-  (meta-builtin/builtin/list-get 2 target))
+  (meta-builtin/builtin/array-get 2 target))
 
 (define (closure-value-put-parameter value target)
-  (begin (meta-builtin/builtin/list-put 2 value target) target))
+  (begin (meta-builtin/builtin/array-put 2 value target) target))
 
-(define (closure-value-body target) (meta-builtin/builtin/list-get 3 target))
+(define (closure-value-body target) (meta-builtin/builtin/array-get 3 target))
 
 (define (closure-value-put-body value target)
-  (begin (meta-builtin/builtin/list-put 3 value target) target))
+  (begin (meta-builtin/builtin/array-put 3 value target) target))
 
 (define (evaluate term env)
   (if (self/lambda/is-var-term term)

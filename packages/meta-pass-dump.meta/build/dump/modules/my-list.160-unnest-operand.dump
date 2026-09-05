@@ -1,42 +1,44 @@
 (define (nil)
-  (let ((unnested.1 (meta-builtin/builtin/make-list)))
-    (meta-builtin/builtin/cons nil unnested.1)))
+  (let ((array (meta-builtin/builtin/make-array)))
+    (begin (meta-builtin/builtin/array-push nil array) array)))
 
 (define (is-nil value)
-  (if (meta-builtin/builtin/is-list value)
+  (if (meta-builtin/builtin/is-array value)
     (if
-        (let ((unnested.1 (meta-builtin/builtin/list-length value)))
+        (let ((unnested.1 (meta-builtin/builtin/array-length value)))
           (meta-builtin/builtin/equal unnested.1 1))
-      (let ((unnested.2 (meta-builtin/builtin/list-head value)))
+      (let ((unnested.2 (meta-builtin/builtin/array-get 0 value)))
         (meta-builtin/builtin/equal unnested.2 nil))
       meta-builtin/builtin/false)
     meta-builtin/builtin/false))
 
 (define (li head tail)
-  (let ((unnested.1 (meta-builtin/builtin/make-list)))
-    (let ((unnested.2 (meta-builtin/builtin/cons tail unnested.1)))
-      (let ((unnested.3 (meta-builtin/builtin/cons head unnested.2)))
-        (meta-builtin/builtin/cons li unnested.3)))))
+  (let ((array (meta-builtin/builtin/make-array)))
+    (begin
+      (meta-builtin/builtin/array-push li array)
+      (begin
+        (meta-builtin/builtin/array-push head array)
+        (begin (meta-builtin/builtin/array-push tail array) array)))))
 
 (define (is-li value)
-  (if (meta-builtin/builtin/is-list value)
+  (if (meta-builtin/builtin/is-array value)
     (if
-        (let ((unnested.1 (meta-builtin/builtin/list-length value)))
+        (let ((unnested.1 (meta-builtin/builtin/array-length value)))
           (meta-builtin/builtin/equal unnested.1 3))
-      (let ((unnested.2 (meta-builtin/builtin/list-head value)))
+      (let ((unnested.2 (meta-builtin/builtin/array-get 0 value)))
         (meta-builtin/builtin/equal unnested.2 li))
       meta-builtin/builtin/false)
     meta-builtin/builtin/false))
 
-(define (li-head target) (meta-builtin/builtin/list-get 1 target))
+(define (li-head target) (meta-builtin/builtin/array-get 1 target))
 
 (define (li-put-head value target)
-  (begin (meta-builtin/builtin/list-put 1 value target) target))
+  (begin (meta-builtin/builtin/array-put 1 value target) target))
 
-(define (li-tail target) (meta-builtin/builtin/list-get 2 target))
+(define (li-tail target) (meta-builtin/builtin/array-get 2 target))
 
 (define (li-put-tail value target)
-  (begin (meta-builtin/builtin/list-put 2 value target) target))
+  (begin (meta-builtin/builtin/array-put 2 value target) target))
 
 (define (my-list-head list)
   (if (self/my-list/is-nil list)
