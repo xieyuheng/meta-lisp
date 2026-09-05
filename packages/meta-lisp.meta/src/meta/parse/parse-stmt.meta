@@ -155,22 +155,22 @@
        (list-map parse-pre-data-field (cdr sexps))
        (if (equal tag '定义结构) (zh) (en))
        location))
-    ((list-member tag '(define-record-type 定义记录类型))
+    ((list-member tag '(define-struct-type 定义结构类型))
      (@comment
-       (define-record-type <type-name>
+       (define-struct-type <type-name>
          (<constructor-name> (<field-name> <type>) ...)
          <predicate-name>
          (<field-name> <accessor-name> <modifier-name>)
          ...)
-       (define-record-type (<type-name> <type-parameter> ...)
+       (define-struct-type (<type-name> <type-parameter> ...)
          (<constructor-name> (<field-name> <type>) ...)
          <predicate-name>
          (<field-name> <accessor-name> <modifier-name>)
          ...))
-     (define-record-type-stmt
+     (define-struct-type-stmt
        (parse-pre-type-constructor (car sexps))
        (parse-explicit-data-constructor (cdr sexps) location)
-       (if (equal tag '定义记录类型) (zh) (en))
+       (if (equal tag '定义结构类型) (zh) (en))
        location))
     ((list-member tag '(define-opaque-type 定义黑盒类型))
      (@comment

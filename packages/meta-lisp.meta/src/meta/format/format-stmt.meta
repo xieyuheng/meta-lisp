@@ -43,7 +43,7 @@
     ((define-struct-stmt type-constructor fields lang location)
      (@text "(define-struct " (format-type-constructor type-constructor) " "
               (text-join " " (list-map format-pre-data-field fields)) ")"))
-    ((define-record-type-stmt type-constructor data-constructor lang location)
+    ((define-struct-type-stmt type-constructor data-constructor lang location)
      (let ((ctor (explicit-data-constructor-name data-constructor))
             (fields (explicit-data-constructor-fields data-constructor))
             (pred (explicit-data-constructor-predicate-name data-constructor))
@@ -53,7 +53,7 @@
                            (@text "(" (symbol-to-text ctor) " "
                                     (text-join " " field-strs) ")")))
             (accessor-strs (list-map format-algebraic-type-accessor fields)))
-       (@text "(define-record-type " (format-type-constructor type-constructor) " "
+       (@text "(define-struct-type " (format-type-constructor type-constructor) " "
                 ctor-clause " "
                 (symbol-to-text pred) " "
                 (text-join " " accessor-strs) ")")))

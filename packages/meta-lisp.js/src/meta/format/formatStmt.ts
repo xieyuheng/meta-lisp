@@ -69,9 +69,9 @@ export function formatStmt<E>(
       return `(define-struct ${type} ${fields})`
     }
 
-    case "DefineRecordTypeStmt": {
+    case "DefineStructTypeStmt": {
       const type = formatTypeConstructor(stmt.typeConstructor)
-      return `(define-record-type ${type} ${formatExplicitDataConstructor(stmt.dataConstructor, formatBody)})`
+      return `(define-struct-type ${type} ${formatExplicitDataConstructor(stmt.dataConstructor, formatBody)})`
     }
 
     case "DefineOpaqueTypeStmt": {

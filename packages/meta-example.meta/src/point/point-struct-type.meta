@@ -1,6 +1,6 @@
-(module point-record)
+(module point-struct-type)
 
-(define-record-type point-t
+(define-struct-type point-t
   (make-point (x float-t) (y float-t))
   is-point
   (x point-x point-put-x)

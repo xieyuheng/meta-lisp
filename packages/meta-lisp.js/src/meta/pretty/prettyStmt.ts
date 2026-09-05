@@ -85,10 +85,10 @@ export function prettyStmt<E>(
       return Ppml.prettySyntax("define-struct", [typeNode], fieldNodes)
     }
 
-    case "DefineRecordTypeStmt": {
+    case "DefineStructTypeStmt": {
       const typeNode = prettyPreTypeConstructor(stmt.typeConstructor)
       return Ppml.prettySyntax(
-        "define-record-type",
+        "define-struct-type",
         [typeNode],
         [prettyExplicitDataConstructor(stmt.dataConstructor, prettyBody)],
       )

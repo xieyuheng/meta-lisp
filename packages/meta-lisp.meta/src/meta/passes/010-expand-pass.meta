@@ -37,7 +37,7 @@
               (make-data-predicate-name lang base-name)
               location))
            location))))
-    ((define-record-type-stmt type-constructor data-constructor lang location)
+    ((define-struct-type-stmt type-constructor data-constructor lang location)
      (expand-define-algebraic-type
        (define-algebraic-type-stmt
          type-constructor

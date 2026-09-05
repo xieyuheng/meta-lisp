@@ -133,21 +133,21 @@
                   (head li-head)
                   (tail li-tail)))))))
   (assert-equal
-    "(define-record-type (pair-t A B) (pair (first A) (second B)) is-pair (first pair-first pair-put-first) (second pair-second pair-put-second))"
+    "(define-struct-type (pair-t A B) (pair (first A) (second B)) is-pair (first pair-first pair-put-first) (second pair-second pair-put-second))"
     (format-stmt
       (parse-stmt
-        (@sexp (define-record-type (pair-t A B)
+        (@sexp (define-struct-type (pair-t A B)
                  (pair (first A) (second B))
                  is-pair
                  (first pair-first pair-put-first)
                  (second pair-second pair-put-second)))))))
 
-(define-test parse-stmt-define-record-type-zh-test
+(define-test parse-stmt-define-struct-type-zh-test
   (assert-equal
-    "(define-record-type 点型 (作点 (x int-t) (y int-t)) 为点 (x 点x 点存x) (y 点y 点存y))"
+    "(define-struct-type 点型 (作点 (x int-t) (y int-t)) 为点 (x 点x 点存x) (y 点y 点存y))"
     (format-stmt
       (parse-stmt
-        (@sexp (定义记录类型 点型
+        (@sexp (定义结构类型 点型
                  (作点 (x int-t) (y int-t))
                  为点
                  (x 点x 点存x)

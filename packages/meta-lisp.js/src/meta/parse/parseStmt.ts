@@ -315,7 +315,7 @@ export const parseStmt = S.createRouter<M.Stmt<M.Exp>>({
     )
   },
 
-  "(cons* 'define-record-type head ctor predicate accessors)": (
+  "(cons* 'define-struct-type head ctor predicate accessors)": (
     { head, ctor, predicate, accessors },
     { location },
   ) => {
@@ -349,7 +349,7 @@ export const parseStmt = S.createRouter<M.Stmt<M.Exp>>({
       accessorMap.set(S.asSymbolSexp(entry[0]).content, fieldEntry)
     }
 
-    return M.DefineRecordTypeStmt(
+    return M.DefineStructTypeStmt(
       parseTypeConstructor(head),
       {
         name: constructorName,
@@ -371,7 +371,7 @@ export const parseStmt = S.createRouter<M.Stmt<M.Exp>>({
     )
   },
 
-  "(cons* '定义记录类型 head ctor predicate accessors)": (
+  "(cons* '定义结构类型 head ctor predicate accessors)": (
     { head, ctor, predicate, accessors },
     { location },
   ) => {
@@ -405,7 +405,7 @@ export const parseStmt = S.createRouter<M.Stmt<M.Exp>>({
       accessorMap.set(S.asSymbolSexp(entry[0]).content, fieldEntry)
     }
 
-    return M.DefineRecordTypeStmt(
+    return M.DefineStructTypeStmt(
       parseTypeConstructor(head),
       {
         name: constructorName,
