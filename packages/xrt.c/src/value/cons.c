@@ -21,6 +21,24 @@ cons_t *make_cons(value_t car, value_t cdr) {
   return self;
 }
 
+list_builder_t list_builder_empty(void) {
+  return (list_builder_t) { .head = x_null, .tail = x_null };
+}
+
+void list_builder_append(list_builder_t *self, value_t value) {
+  value_t cell = x_object(make_cons(value, x_null));
+  if (self->head == x_null) {
+    self->head = cell;
+  } else {
+    to_cons(self->tail)->cdr = cell;
+  }
+  self->tail = cell;
+}
+
+value_t list_builder_result(const list_builder_t *self) {
+  return self->head;
+}
+
 void cons_free(cons_t *self) {
   free(self);
 }

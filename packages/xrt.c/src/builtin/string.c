@@ -54,40 +54,40 @@ value_t x_text_to_symbol(value_t string) {
 
 value_t x_text_chars(value_t string) {
   const text_t *text = xtext_text(to_xtext(string));
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   for (size_t i = 0; i < text_length(text); i++) {
     xtext_t *c = make_xtext_take_text(text_subtext(text, i, i + 1));
-    x_array_push_mut(x_object(c), result);
+    list_builder_append(&result, x_object(c));
   }
 
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
 
 value_t x_text_lines(value_t string) {
   const text_t *text = xtext_text(to_xtext(string));
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   size_t cursor = 0;
   char *line_string = string_next_line(text_string(text), &cursor);
   while (line_string) {
-    x_array_push_mut(x_object(make_xtext_take(line_string)), result);
+    list_builder_append(&result, x_object(make_xtext_take(line_string)));
     line_string = string_next_line(text_string(text), &cursor);
   }
 
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
 
 value_t x_text_split(value_t delimiter, value_t string) {
   const text_t *text = xtext_text(to_xtext(string));
   const char *delimiter_string = xtext_string(to_xtext(delimiter));
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   size_t cursor = 0;
   char *substring = string_next_split(text_string(text), delimiter_string, &cursor);
   while (substring) {
-    x_array_push_mut(x_object(make_xtext_take(substring)), result);
+    list_builder_append(&result, x_object(make_xtext_take(substring)));
     substring = string_next_split(text_string(text), delimiter_string, &cursor);
   }
 
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
 
 value_t x_text_join(value_t separator, value_t list) {

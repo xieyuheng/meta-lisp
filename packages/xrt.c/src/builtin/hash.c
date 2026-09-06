@@ -51,35 +51,35 @@ value_t x_hash_delete(value_t key, value_t hash) {
 }
 
 value_t x_hash_keys(value_t hash) {
-  value_t keys = x_make_array();
+  list_builder_t keys = list_builder_empty();
 
   hash_iter_t iter;
   hash_iter_init(&iter, to_xhash(hash)->hash);
   const hash_entry_t *entry = hash_iter_next_entry(&iter);
   while (entry) {
-    x_array_push_mut((value_t) entry->key, keys);
+    list_builder_append(&keys, (value_t) entry->key);
     entry = hash_iter_next_entry(&iter);
   }
 
-  return x_array_to_list(keys);
+  return list_builder_result(&keys);
 }
 
 value_t x_hash_values(value_t hash) {
-  value_t values = x_make_array();
+  list_builder_t values = list_builder_empty();
 
   hash_iter_t iter;
   hash_iter_init(&iter, to_xhash(hash)->hash);
   const hash_entry_t *entry = hash_iter_next_entry(&iter);
   while (entry) {
-    x_array_push_mut((value_t) entry->value, values);
+    list_builder_append(&values, (value_t) entry->value);
     entry = hash_iter_next_entry(&iter);
   }
 
-  return x_array_to_list(values);
+  return list_builder_result(&values);
 }
 
 value_t x_hash_entries(value_t hash) {
-  value_t entries = x_make_array();
+  list_builder_t entries = list_builder_empty();
 
   hash_iter_t iter;
   hash_iter_init(&iter, to_xhash(hash)->hash);
@@ -87,9 +87,9 @@ value_t x_hash_entries(value_t hash) {
   while (entry) {
     value_t key = (value_t) entry->key;
     value_t value = (value_t) entry->value;
-    x_array_push_mut(x_make_pair(key, value), entries);
+    list_builder_append(&entries, x_make_pair(key, value));
     entry = hash_iter_next_entry(&iter);
   }
 
-  return x_array_to_list(entries);
+  return list_builder_result(&entries);
 }

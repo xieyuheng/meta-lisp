@@ -8,8 +8,17 @@ struct cons_t {
   value_t cdr;
 };
 
+typedef struct list_builder_t {
+  value_t head;
+  value_t tail;
+} list_builder_t;
+
 cons_t *make_cons(value_t car, value_t cdr);
 void cons_free(cons_t *self);
+
+list_builder_t list_builder_empty(void);
+void list_builder_append(list_builder_t *self, value_t value);
+value_t list_builder_result(const list_builder_t *self);
 
 bool is_cons(value_t value);
 cons_t *to_cons(value_t value);

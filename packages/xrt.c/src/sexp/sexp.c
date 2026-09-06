@@ -9,18 +9,18 @@ value_t parse_sexps(const char *string) {
   list_t *tokens = lexer_lex(lexer);
   lexer_free(lexer);
 
-  value_t sexps = x_make_array();
+  list_builder_t sexps = list_builder_empty();
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
       break;
     }
 
-    x_array_push_mut(for_sexp(tokens), sexps);
+    list_builder_append(&sexps, for_sexp(tokens));
   }
 
   list_free(tokens);
-  return x_array_to_list(sexps);
+  return list_builder_result(&sexps);
 }
 
 // - assume a sexp exists (maybe after line comments)
@@ -106,7 +106,7 @@ static value_t for_sexp(list_t *tokens) {
 }
 
 static value_t for_list(const char *end, list_t *tokens) {
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
@@ -119,7 +119,7 @@ static value_t for_list(const char *end, list_t *tokens) {
       if (string_equal(token->content, end)) {
         token = list_pop_front(tokens);
         token_free(token);
-        return x_array_to_list(result);
+        return list_builder_result(&result);
       } else {
         who_printf(
           "bracket end mismatch, expecting: %s, meet: %s\n",
@@ -127,7 +127,7 @@ static value_t for_list(const char *end, list_t *tokens) {
         exit(1);
       }
     } else {
-      x_array_push_mut(for_sexp(tokens), result);
+      list_builder_append(&result, for_sexp(tokens));
     }
   }
 }

@@ -28,26 +28,26 @@ value_t x_current_command_line(void) {
   if (!command_line) {
     return x_null;
   }
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   size_t length = array_length(command_line);
   for (size_t i = 0; i < length; i++) {
     char *str = (char *) array_get(command_line, i);
-    x_array_push_mut(x_object(make_xtext(str)), result);
+    list_builder_append(&result, x_object(make_xtext(str)));
   }
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
 
 value_t x_current_full_command_line(void) {
   if (!full_command_line) {
     return x_null;
   }
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   size_t length = array_length(full_command_line);
   for (size_t i = 0; i < length; i++) {
     char *str = (char *) array_get(full_command_line, i);
-    x_array_push_mut(x_object(make_xtext(str)), result);
+    list_builder_append(&result, x_object(make_xtext(str)));
   }
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
 
 value_t x_exit(value_t status) {

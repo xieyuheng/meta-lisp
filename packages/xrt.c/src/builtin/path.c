@@ -148,27 +148,27 @@ value_t x_path_write(value_t path, value_t string) {
 }
 
 value_t x_path_list(value_t path) {
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   fs_iter_t *iter = fs_make_iter(xtext_string(to_xtext(path)));
   char *name = fs_iter_next(iter);
   while (name) {
-    x_array_push_mut(x_object(make_xtext_take(name)), result);
+    list_builder_append(&result, x_object(make_xtext_take(name)));
     name = fs_iter_next(iter);
   }
   fs_iter_free(iter);
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
 
 value_t x_path_list_recursive(value_t path) {
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   fs_recursive_iter_t *iter = fs_make_recursive_iter(xtext_string(to_xtext(path)));
   char *name = fs_recursive_iter_next(iter);
   while (name) {
-    x_array_push_mut(x_object(make_xtext_take(name)), result);
+    list_builder_append(&result, x_object(make_xtext_take(name)));
     name = fs_recursive_iter_next(iter);
   }
   fs_recursive_iter_free(iter);
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
 
 value_t x_path_ensure_file(value_t path) {

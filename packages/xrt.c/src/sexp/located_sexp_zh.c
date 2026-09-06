@@ -42,7 +42,7 @@ static value_t list_sexp_zh(value_t elements, value_t location) {
   value_t sexp = x_make_array();
   value_t tag = x_object(intern_symbol("列表符号算式"));
   x_array_push_mut(tag, sexp);
-  x_array_push_mut(x_array_to_list(elements), sexp);
+  x_array_push_mut(elements, sexp);
   x_array_push_mut(location, sexp);
   return sexp;
 }
@@ -69,18 +69,18 @@ value_t parse_located_sexps_zh(const char *pathname, const char *string) {
   lexer_free(lexer);
 
   value_t path = x_object(make_xtext(pathname));
-  value_t sexps = x_make_array();
+  list_builder_t sexps = list_builder_empty();
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
       break;
     }
 
-    x_array_push_mut(for_sexp_zh(path, tokens), sexps);
+    list_builder_append(&sexps, for_sexp_zh(path, tokens));
   }
 
   list_free(tokens);
-  return x_array_to_list(sexps);
+  return list_builder_result(&sexps);
 }
 
 // - assume a sexp exists (maybe after line comments)
@@ -164,7 +164,7 @@ static value_t for_sexp_zh(value_t path, list_t *tokens) {
       value_t location = make_source_location_sexp_zh(path, value_from_span_zh(span));
       value_t content = x_object(intern_symbol("@方括号"));
       value_t head = symbol_sexp_zh(content, location);
-      x_array_push_front_mut(head, elements);
+      elements = x_cons(head, elements);
       token_free(token);
       return list_sexp_zh(elements, location);
     } else if (string_equal(token->content, "{")) {
@@ -175,7 +175,7 @@ static value_t for_sexp_zh(value_t path, list_t *tokens) {
       value_t location = make_source_location_sexp_zh(path, value_from_span_zh(span));
       value_t content = x_object(intern_symbol("@花括号"));
       value_t head = symbol_sexp_zh(content, location);
-      x_array_push_front_mut(head, elements);
+      elements = x_cons(head, elements);
       token_free(token);
       return list_sexp_zh(elements, location);
     } else {
@@ -200,7 +200,7 @@ static value_t for_sexp_zh(value_t path, list_t *tokens) {
 
 static value_t for_elements_zh(value_t path, const char *end, list_t *tokens,
                                struct span_t *out_end_span) {
-  value_t sexp = x_make_array();
+  list_builder_t sexp = list_builder_empty();
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
@@ -214,7 +214,7 @@ static value_t for_elements_zh(value_t path, const char *end, list_t *tokens,
         *out_end_span = token->span;
         token = list_pop_front(tokens);
         token_free(token);
-        return sexp;
+        return list_builder_result(&sexp);
       } else {
         who_printf(
           "bracket end mismatch, expecting: %s, meet: %s",
@@ -222,7 +222,7 @@ static value_t for_elements_zh(value_t path, const char *end, list_t *tokens,
         exit(1);
       }
     } else {
-      x_array_push_mut(for_sexp_zh(path, tokens), sexp);
+      list_builder_append(&sexp, for_sexp_zh(path, tokens));
     }
   }
 }

@@ -72,14 +72,14 @@ value_t x_set_disjoint(value_t lhs, value_t rhs) {
 }
 
 value_t x_set_to_list(value_t set) {
-  value_t result = x_make_array();
+  list_builder_t result = list_builder_empty();
   set_iter_t iter;
   set_iter_init(&iter, to_xset(set)->set);
   const hash_entry_t *entry = set_iter_next_entry(&iter);
   while (entry) {
-    x_array_push_mut((value_t) entry->value, result);
+    list_builder_append(&result, (value_t) entry->value);
     entry = set_iter_next_entry(&iter);
   }
 
-  return x_array_to_list(result);
+  return list_builder_result(&result);
 }
