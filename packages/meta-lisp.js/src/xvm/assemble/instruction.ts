@@ -77,6 +77,7 @@ const InstrSpecs: Record<string, InstrSpec> = {
   "branch": { opcode: 0x41, operands: ["var", "label", "label"] },
   "return": { opcode: 0x42, operands: ["var"] },
   "return-void": { opcode: 0x43, operands: [] },
+  "gc": { opcode: 0x44, operands: [] },
   "iadd": { opcode: 0x50, operands: ["var", "var", "var"] },
   "isub": { opcode: 0x51, operands: ["var", "var", "var"] },
   "imul": { opcode: 0x52, operands: ["var", "var", "var"] },

@@ -61,6 +61,7 @@ typedef enum {
   OP_BRANCH = 0x41,
   OP_RETURN = 0x42,
   OP_RETURN_VOID = 0x43,
+  OP_GC = 0x44,
 
   OP_IADD = 0x50,
   OP_ISUB = 0x51,
@@ -263,7 +264,6 @@ void xvm_pop_frame(xvm_t *xvm) {
   xvm->frame_top = xvm->frame_offset;
   xvm->frame_offset = current->prev_frame_offset;
   xvm->frame_count--;
-  xvm_gc_maybe_collect(xvm);
 }
 
 static void xvm_tail_call_replace(xvm_t *xvm, function_t *fn,
@@ -508,7 +508,8 @@ static size_t instruction_operand_size(uint8_t op) {
   case OP_GOTO: return 4;
   case OP_BRANCH: return 2 + 4 + 4;
   case OP_RETURN: return 2;
-  case OP_RETURN_VOID: return 0;
+  case OP_RETURN_VOID:
+  case OP_GC: return 0;
   case OP_IADD:
   case OP_ISUB:
   case OP_IMUL:
@@ -682,6 +683,7 @@ void xvm_execute(xvm_t *xvm) {
     threaded_handlers[OP_STORE_GLOBAL] = &&th_store_global;
     threaded_handlers[OP_RETURN] = &&th_return;
     threaded_handlers[OP_RETURN_VOID] = &&th_return_void;
+    threaded_handlers[OP_GC] = &&th_gc;
 
     threaded_handlers[OP_CALL_0] = &&th_call_0;
     threaded_handlers[OP_CALL_1] = &&th_call_1;
@@ -787,6 +789,7 @@ void xvm_execute(xvm_t *xvm) {
     th_store_global: exec_store_global(frame, locals); frame->pc += sizeof(void *); TH_NEXT();
     th_return: exec_return(xvm, frame, locals); continue;
     th_return_void: exec_return_void(xvm, frame); continue;
+    th_gc: xvm_gc_maybe_collect(xvm); frame->pc += 1 + sizeof(void *); TH_NEXT();
 
     th_call_0: exec_call_0(xvm, frame, locals); continue;
     th_call_1: exec_call_1(xvm, frame, locals); continue;

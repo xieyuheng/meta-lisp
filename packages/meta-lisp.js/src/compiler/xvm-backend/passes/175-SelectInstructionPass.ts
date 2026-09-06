@@ -1,5 +1,7 @@
 import * as B from "../../../basic/index.ts"
 import * as Xvm from "../../../xvm/index.ts"
+import { allocatingPrimitivesEn } from "./allocating-primitives-en.ts"
+import { allocatingPrimitivesZh } from "./allocating-primitives-zh.ts"
 
 export function SelectInstructionPass(program: B.Program): Xvm.Program {
   const xvmProgram = Xvm.createProgram()
@@ -59,6 +61,16 @@ function isPrimitiveFunction(program: B.Program, name: string): boolean {
   return definition?.kind === "ExternFunctionDefinition"
 }
 
+// - match against the last segment of a qualified name,
+//   so that one entry covers both the `builtin` and the `内置` namespaces.
+function isAllocatingPrimitive(name: string): boolean {
+  const shortName = name.split("/").pop() ?? name
+  return (
+    allocatingPrimitivesEn.has(shortName) ||
+    allocatingPrimitivesZh.has(shortName)
+  )
+}
+
 function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm.Instr> {
   switch (instr.op) {
     case "argument": {
@@ -116,7 +128,9 @@ function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm.Instr> {
       const dest = Xvm.VarOperand(instr.output[0].id)
       const name = B.expectSymbol(instr.attributes, "name")
       const size = B.expectInt(instr.attributes, "size")
+      // make-closure always allocates a new closure object.
       return [
+        Xvm.Instr("gc", []),
         Xvm.Instr("make-closure", [
           dest,
           Xvm.FnOperand(name),
@@ -155,12 +169,19 @@ function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm.Instr> {
       const args = instr.input.map((cell) => Xvm.VarOperand(cell.id))
       const isPrim = isPrimitiveFunction(program, name)
       const op = isPrim ? `call-prim-${args.length}` : `call-${args.length}`
-      const result: Array<Xvm.Instr> = [
+      const result: Array<Xvm.Instr> = []
+      // a prim call may allocate inside the C implementation, which the
+      // compiler cannot see, so check before the call at an instruction
+      // boundary, where all live values are in the frame locals.
+      if (isPrim && isAllocatingPrimitive(name)) {
+        result.push(Xvm.Instr("gc", []))
+      }
+      result.push(
         Xvm.Instr(op, [
           isPrim ? Xvm.PrimOperand(name) : Xvm.FnOperand(name),
           ...args,
         ]),
-      ]
+      )
       if (instr.output.length > 0) {
         const dest = Xvm.VarOperand(instr.output[0].id)
         result.push(Xvm.Instr("load-result", [dest]))
@@ -175,12 +196,16 @@ function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm.Instr> {
       const op = isPrim
         ? `tail-call-prim-${args.length}`
         : `tail-call-${args.length}`
-      return [
-        Xvm.Instr(op, [
-          isPrim ? Xvm.PrimOperand(name) : Xvm.FnOperand(name),
-          ...args,
-        ]),
-      ]
+      const call = Xvm.Instr(op, [
+        isPrim ? Xvm.PrimOperand(name) : Xvm.FnOperand(name),
+        ...args,
+      ])
+      // a tail call never returns to pop the frame, so a gc check must
+      // happen before the call.
+      if (isPrim && isAllocatingPrimitive(name)) {
+        return [Xvm.Instr("gc", []), call]
+      }
+      return [call]
     }
 
     case "apply": {
