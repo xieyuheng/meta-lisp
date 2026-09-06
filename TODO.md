@@ -1,3 +1,14 @@
+[xvm.c] gc
+
+问题：
+
+- 是否分配点只有可能是 prim？
+- 可否统计哪些 prim 是有可能分配内存的，
+  然后在编译时，给这些 prim 的调用前面，
+  增加一个 gc 指令？
+
+[x86.c] 给 x86 后端加 gc
+
 # self-hosting
 
 [meta-lisp.meta] [review] env.meta
