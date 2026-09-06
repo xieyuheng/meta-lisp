@@ -2,6 +2,7 @@ export const FixupTypeValues = [
   "string-value",
   "symbol-value",
   "fn-pointer",
+  "closure-value",
   "prim-pointer",
   "global-pointer",
 ] as const

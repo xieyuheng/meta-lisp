@@ -143,6 +143,11 @@ static void apply_fixups(program_t *program, const name_table_t *names, const tl
     } else if (string_equal(type, "fn-pointer")) {
       function_t *target = program_lookup_function_or_fail(program, name);
       memory_copy(dest, &target, sizeof(function_t *));
+    } else if (string_equal(type, "closure-value")) {
+      function_t *target = program_lookup_function_or_fail(program, name);
+      closure_t *closure = make_static_closure(target);
+      value_t value = x_object(closure);
+      memory_copy(dest, &value, sizeof(value_t));
     } else if (string_equal(type, "prim-pointer")) {
       primitive_entry_t *target = program_lookup_primitive_or_fail(program, name);
       primitive_fn_t fn = target->fn;

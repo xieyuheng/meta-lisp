@@ -122,6 +122,17 @@ function decodeOperand(
       }
     }
 
+    case "closure": {
+      const fixup = ctx.fixupByOffset.get(offset)
+      if (fixup === undefined) {
+        throw new Error(`[disassembleInstr] missing closure fixup at ${offset}`)
+      }
+      return {
+        operand: FnOperand(fixup.name),
+        nextOffset: offset + 8,
+      }
+    }
+
     case "prim": {
       const fixup = ctx.fixupByOffset.get(offset)
       if (fixup === undefined) {

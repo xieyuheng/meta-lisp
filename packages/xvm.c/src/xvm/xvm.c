@@ -334,15 +334,6 @@ static inline void exec_load_result(xvm_t *xvm, frame_t *frame, value_t *locals)
   frame->pc += 1 + sizeof(uint16_t);
 }
 
-static inline void exec_load_closure(frame_t *frame, value_t *locals) {
-  uint16_t dest; function_t *fn;
-  memory_load(frame->pc + 1, dest);
-  memory_load(frame->pc + 1 + sizeof(uint16_t), fn);
-  closure_t *closure = make_closure(fn, 0);
-  locals[dest] = x_object(closure);
-  frame->pc += 1 + sizeof(uint16_t) + sizeof(function_t *);
-}
-
 static inline void exec_make_closure(frame_t *frame, value_t *locals) {
   uint16_t dest; function_t *fn; uint16_t size;
   memory_load(frame->pc + 1, dest);
@@ -683,7 +674,7 @@ void xvm_execute(xvm_t *xvm) {
     threaded_handlers[OP_LOAD_FLOAT] = &&th_load_value;
     threaded_handlers[OP_LOAD_STRING] = &&th_load_value;
     threaded_handlers[OP_LOAD_SYMBOL] = &&th_load_value;
-    threaded_handlers[OP_LOAD_CLOSURE] = &&th_load_closure;
+    threaded_handlers[OP_LOAD_CLOSURE] = &&th_load_value;
     threaded_handlers[OP_MAKE_CLOSURE] = &&th_make_closure;
     threaded_handlers[OP_STORE_CLOSURE_ARG] = &&th_store_closure_arg;
     threaded_handlers[OP_LOAD_RESULT] = &&th_load_result;
@@ -789,7 +780,6 @@ void xvm_execute(xvm_t *xvm) {
 
     th_move: exec_move(frame, locals); frame->pc += sizeof(void *); TH_NEXT();
     th_load_value: exec_load_value(frame, locals); frame->pc += sizeof(void *); TH_NEXT();
-    th_load_closure: exec_load_closure(frame, locals); frame->pc += sizeof(void *); TH_NEXT();
     th_make_closure: exec_make_closure(frame, locals); frame->pc += sizeof(void *); TH_NEXT();
     th_store_closure_arg: exec_store_closure_arg(frame, locals); frame->pc += sizeof(void *); TH_NEXT();
     th_load_result: exec_load_result(xvm, frame, locals); frame->pc += sizeof(void *); TH_NEXT();

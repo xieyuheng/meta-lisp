@@ -25,6 +25,29 @@ closure_t *make_closure(function_t *function, size_t size) {
   return self;
 }
 
+static record_t *static_closure_record = NULL;
+
+// - make a closure that is loaded as a program constant (from a fixup).
+// - it has no captured variables, so it is permanent and not managed by gc.
+closure_t *make_static_closure(function_t *function) {
+  if (!static_closure_record) {
+    static_closure_record = make_record();
+  }
+
+  closure_t *found = record_get(static_closure_record, function->name);
+  if (found) {
+    return found;
+  }
+
+  closure_t *self = new(closure_t);
+  self->header.class = &closure_class;
+  self->header.is_static = true;
+  self->function = function;
+  self->size = 0;
+  record_insert_or_fail(static_closure_record, function->name, self);
+  return self;
+}
+
 void closure_free(closure_t *self) {
   free(self->args);
   free(self);

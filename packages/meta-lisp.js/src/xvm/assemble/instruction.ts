@@ -8,6 +8,7 @@ export type OperandSpec =
   | "string"
   | "symbol"
   | "fn"
+  | "closure"
   | "prim"
   | "global"
   | "label"
@@ -24,7 +25,7 @@ const InstrSpecs: Record<string, InstrSpec> = {
   "load-float": { opcode: 0x03, operands: ["var", "float"] },
   "load-string": { opcode: 0x04, operands: ["var", "string"] },
   "load-symbol": { opcode: 0x05, operands: ["var", "symbol"] },
-  "load-closure": { opcode: 0x06, operands: ["var", "fn"] },
+  "load-closure": { opcode: 0x06, operands: ["var", "closure"] },
   "make-closure": { opcode: 0x07, operands: ["var", "fn", "u16"] },
   "store-closure-arg": { opcode: 0x08, operands: ["var", "u16", "var"] },
   "load-result": { opcode: 0x09, operands: ["var"] },
@@ -144,6 +145,7 @@ function operandSpecSize(operand: OperandSpec): number {
     case "string":
     case "symbol":
     case "fn":
+    case "closure":
     case "prim":
     case "global": {
       return 8

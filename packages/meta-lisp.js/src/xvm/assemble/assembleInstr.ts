@@ -142,6 +142,12 @@ function assembleOperand(
       return
     }
 
+    case "closure": {
+      addFixup(exe, ctx, "closure-value", asFnOperand(operand).name, ctx.offset)
+      ctx.offset += 8
+      return
+    }
+
     case "prim": {
       addFixup(
         exe,

@@ -12,6 +12,7 @@ struct closure_t {
 };
 
 closure_t *make_closure(function_t *function, size_t size);
+closure_t *make_static_closure(function_t *function);
 void closure_free(closure_t *self);
 
 bool is_closure(value_t value);

@@ -1,4 +1,4 @@
-0x01 name-table 60
+0x01 name-table 74
   "apply-twice"
   "f"
   "x"
@@ -9,6 +9,7 @@
   "one"
   "result"
   "main"
+  "closure-value"
   "fn-pointer"
 0x10 function-definition 51
   name: apply-twice
@@ -32,5 +33,5 @@
   local-names: (f x result)
   labels: ()
 0x14 function-fixup-table 32
-  (fixup fn-pointer inc) -> main:3
+  (fixup closure-value inc) -> main:3
   (fixup fn-pointer apply-twice) -> main:23
