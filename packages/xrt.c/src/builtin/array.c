@@ -21,6 +21,10 @@ value_t x_array_is_empty(value_t array) {
 }
 
 value_t x_array_pop_mut(value_t array) {
+  if (array_is_empty(to_xarray(array)->elements)) {
+    who_printf("(array-pop) empty array\n");
+    exit(1);
+  }
   return xarray_pop(to_xarray(array));
 }
 
@@ -30,6 +34,10 @@ value_t x_array_push_mut(value_t value, value_t array) {
 }
 
 value_t x_array_pop_front_mut(value_t array) {
+  if (array_is_empty(to_xarray(array)->elements)) {
+    who_printf("(array-pop-front) empty array\n");
+    exit(1);
+  }
   return xarray_pop_front(to_xarray(array));
 }
 
@@ -39,11 +47,23 @@ value_t x_array_push_front_mut(value_t value, value_t array) {
 }
 
 value_t x_array_get(value_t index, value_t array) {
-  return xarray_get(to_xarray(array), to_int64(index));
+  size_t i = to_int64(index);
+  size_t length = array_length(to_xarray(array)->elements);
+  if (i >= length) {
+    who_printf("(array-get) index out of range: index = %zu, length = %zu\n", i, length);
+    exit(1);
+  }
+  return xarray_get(to_xarray(array), i);
 }
 
 value_t x_array_put_mut(value_t index, value_t value, value_t array) {
-  xarray_put(to_xarray(array), to_int64(index), value);
+  size_t i = to_int64(index);
+  size_t length = array_length(to_xarray(array)->elements);
+  if (i >= length) {
+    who_printf("(array-put) index out of range: index = %zu, length = %zu\n", i, length);
+    exit(1);
+  }
+  xarray_put(to_xarray(array), i, value);
   return x_void;
 }
 

@@ -133,16 +133,8 @@ inline void *array_pick(const array_t *self, size_t back_index) {
 }
 
 inline void array_put(array_t *self, size_t index, void *value) {
-  if (index >= self->capacity) {
-    array_double_capacity(self);
-    array_put(self, index, value);
-    return;
-  }
-
+  assert(index < array_length(self));
   self->values[(self->front + index) & self->mask] = value;
-
-  if (index >= array_length(self))
-    self->back += index + 1 - array_length(self);
 }
 
 void array_reverse(array_t *self) {

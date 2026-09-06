@@ -5,15 +5,15 @@ int main(void) {
 
   {
     array_t *array = make_array();
-    array_put(array, 0, (void *) 3);
-    array_put(array, 1, (void *) 7);
-    array_put(array, 2, (void *) 8);
-    array_put(array, 3, (void *) 5);
-    array_put(array, 4, (void *) 2);
-    array_put(array, 5, (void *) 1);
-    array_put(array, 6, (void *) 9);
-    array_put(array, 7, (void *) 5);
-    array_put(array, 8, (void *) 4);
+    array_push(array, (void *) 3);
+    array_push(array, (void *) 7);
+    array_push(array, (void *) 8);
+    array_push(array, (void *) 5);
+    array_push(array, (void *) 2);
+    array_push(array, (void *) 1);
+    array_push(array, (void *) 9);
+    array_push(array, (void *) 5);
+    array_push(array, (void *) 4);
 
     array_sort(array, int_compare_ascending);
 
@@ -44,13 +44,13 @@ int main(void) {
 
   {
     array_t *array = make_array();
-    array_put(array, 0, (void *) "A");
-    array_put(array, 1, (void *) "BC");
-    array_put(array, 2, (void *) "B");
-    array_put(array, 3, (void *) "C");
-    array_put(array, 4, (void *) "ABC");
-    array_put(array, 5, (void *) "AB");
-    array_put(array, 6, (void *) "CB");
+    array_push(array, (void *) "A");
+    array_push(array, (void *) "BC");
+    array_push(array, (void *) "B");
+    array_push(array, (void *) "C");
+    array_push(array, (void *) "ABC");
+    array_push(array, (void *) "AB");
+    array_push(array, (void *) "CB");
 
     array_sort(array, string_compare_lexical);
 

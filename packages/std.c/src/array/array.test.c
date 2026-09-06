@@ -112,28 +112,11 @@ int main(void) {
   }
 
   {
-    // array_put + auto grow
+    // array_push grows the array
 
     array_t *array = make_array();
 
-    array_put(array, 4, (void *) 1);
-    assert(array_length(array) == 5);
-
-    assert(array_get(array, 0) == NULL);
-    assert(array_get(array, 1) == NULL);
-    assert(array_get(array, 2) == NULL);
-    assert(array_get(array, 3) == NULL);
-    assert(array_get(array, 4) == (void *) 1);
-
-    array_free(array);
-  }
-
-  {
-    // array_put + auto grow -- again
-
-    array_t *array = make_array();
-
-    array_put(array, 0, (void *) 1);
+    array_push(array, (void *) 1);
     assert(array_length(array) == 1);
 
     assert(array_get(array, 0) == (void *) 1);
