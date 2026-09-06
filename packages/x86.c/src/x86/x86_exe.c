@@ -1,4 +1,4 @@
-#include "index.h"
+#include "../index.h"
 
 typedef void *(fn_t)(void);
 
@@ -93,6 +93,27 @@ static void apply_label_abs64(x86_exe_t *self, const char *name, uint8_t *patch_
   *(uint64_t *) patch_addr = (uint64_t)((int64_t) target_addr + addend);
 }
 
+static void apply_extern(const char *name, uint8_t *patch_addr, int64_t addend) {
+  const void *address = builtin_lookup(name);
+  if (address == NULL) {
+    where_printf("[x86_exe_load] undefined extern: %s\n", name);
+    exit(1);
+  }
+
+  // value = address + A
+  *(uint64_t *) patch_addr = (uint64_t)((int64_t) address + addend);
+}
+
+static void apply_text_value(const char *name, uint8_t *patch_addr) {
+  value_t value = x_object(make_static_xtext(name));
+  memory_copy(patch_addr, &value, sizeof(value_t));
+}
+
+static void apply_symbol_value(const char *name, uint8_t *patch_addr) {
+  value_t value = x_object(intern_symbol(name));
+  memory_copy(patch_addr, &value, sizeof(value_t));
+}
+
 // ---------------------------------------------------------------------------
 // load: parse → mmap → fixups → mprotect
 // ---------------------------------------------------------------------------
@@ -170,9 +191,14 @@ void x86_exe_load(x86_exe_t *self) {
     } else if (string_equal(type, "label-abs64")) {
       apply_label_abs64(self, name, patch_addr, r->addend);
     } else if (string_equal(type, "extern")) {
-      where_printf("[x86_exe_load] warning: 'extern' fixup not supported yet\n");
+      apply_extern(name, patch_addr, r->addend);
+    } else if (string_equal(type, "text-value")) {
+      apply_text_value(name, patch_addr);
+    } else if (string_equal(type, "symbol-value")) {
+      apply_symbol_value(name, patch_addr);
     } else {
-      where_printf("[x86_exe_load] warning: unknown fixup type '%s'\n", type);
+      where_printf("[x86_exe_load] unknown fixup type: %s\n", type);
+      exit(1);
     }
   }
 

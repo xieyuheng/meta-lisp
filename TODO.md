@@ -1,17 +1,3 @@
-# x86
-
-[x86] review loader
-[x86] review assembler
-
-# native code generation
-
-[meta-lisp.js] 190-SelectInstructionPass -- `selectInstr`
-
-[meta-lisp.js] 190-SelectInstructionPass -- `selectDefinition` -- handle `StructDefinition`
-[meta-lisp.js] 190-SelectInstructionPass -- `selectDefinition` -- handle `VariableDefinition`
-[meta-lisp.js] 190-SelectInstructionPass -- `selectDefinition` -- handle `ExternFunctionDefinition`
-[meta-lisp.js] 190-SelectInstructionPass -- `selectDefinition` -- handle `ExternVariableDefinition`
-
 # self-hosting
 
 [meta-lisp.meta] [review] env.meta

@@ -7,6 +7,7 @@ static void sanity_check(void) {
 
 static void handle_run_x86_exe(cli_ctx_t *ctx) {
   const char *pathname = cli_arg_get(ctx, 0);
+  setup_current_command_line(ctx->passthrough);
   file_t *file = open_file_or_fail(pathname, "rb");
   buffer_t *buffer = make_buffer();
   buffer_read(buffer, file);
@@ -20,6 +21,7 @@ static void handle_run_x86_exe(cli_ctx_t *ctx) {
 
 static void handle_run_x86_exe_and_print(cli_ctx_t *ctx) {
   const char *pathname = cli_arg_get(ctx, 0);
+  setup_current_command_line(ctx->passthrough);
   file_t *file = open_file_or_fail(pathname, "rb");
   buffer_t *buffer = make_buffer();
   buffer_read(buffer, file);
@@ -111,6 +113,7 @@ int main(int argc, char *argv[]) {
   setbuf(stdout, NULL);
   setbuf(stderr, NULL);
   init_global_gc();
+  builtin_init();
 
   setup_full_command_line((size_t) argc, argv);
 

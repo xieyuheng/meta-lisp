@@ -1,5 +1,6 @@
 import type { Instr } from "../instr/index.ts"
 import { encodeControl } from "./control.ts"
+import { encodeCqo, encodeIdiv } from "./div.ts"
 import { encodeGroup1 } from "./group1.ts"
 import { encodeImul } from "./imul.ts"
 import { encodeLea } from "./lea.ts"
@@ -42,6 +43,10 @@ export function encode(instr: Instr): Array<EncodedInstruction> {
       return encodeTest(instr)
     case "imul":
       return encodeImul(instr)
+    case "idiv":
+      return encodeIdiv(instr)
+    case "cqo":
+      return encodeCqo()
     case "nop":
       return encodeNop()
     case "syscall":

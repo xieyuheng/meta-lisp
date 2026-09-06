@@ -29,7 +29,11 @@ export function ExplicateControlPass(pkg: M.Package): B.Program {
         }
 
         if (definition.kind === "TestDefinition") {
-          testNames.push(definitionQualifiedName(definition))
+          // - note: only test the current project, not the dependency
+          //   closure (like the xvm backend).
+          if (orderedPkg === pkg) {
+            testNames.push(definitionQualifiedName(definition))
+          }
         }
       }
     }
@@ -316,6 +320,7 @@ function explicateUnnestedTerm(
 
       const functionAddress = generateCell(state, "function-address")
       const size = generateCell(state, "closure-size")
+      const sizeTagged = generateCell(state, "closure-size")
       const makeClosureAddress = generateCell(state, "make-closure-address")
       const closure = generateCell(state, "closure")
 
@@ -327,13 +332,14 @@ function explicateUnnestedTerm(
         B.Instr("int64", [size], [], {
           content: B.IntAttribute(BigInt(freeVarCells.length)),
         }),
+        B.Instr("tag-int", [sizeTagged], [size], {}),
         B.Instr("address", [makeClosureAddress], [], {
           name: B.SymbolAttribute("meta-builtin/builtin/make-closure"),
         }),
         B.Instr(
           "call",
           [closure],
-          [makeClosureAddress, functionAddress, size],
+          [makeClosureAddress, functionAddress, sizeTagged],
           {},
         ),
       ]
@@ -342,6 +348,7 @@ function explicateUnnestedTerm(
       for (let i = 0; i < freeVarCells.length; i++) {
         const putArgAddress = generateCell(state, "put-arg-address")
         const index = generateCell(state, "index")
+        const indexTagged = generateCell(state, "index")
         const next = generateCell(state, "closure")
         instrs.push(
           B.Instr("address", [putArgAddress], [], {
@@ -350,10 +357,11 @@ function explicateUnnestedTerm(
           B.Instr("int64", [index], [], {
             content: B.IntAttribute(BigInt(i)),
           }),
+          B.Instr("tag-int", [indexTagged], [index], {}),
           B.Instr(
             "call",
             [next],
-            [putArgAddress, index, freeVarCells[i], current],
+            [putArgAddress, indexTagged, freeVarCells[i], current],
             {},
           ),
         )
@@ -368,6 +376,17 @@ function explicateUnnestedTerm(
       const [argInstrGroups, args] = arrayUnzip(pairs)
       const direct = tryResolveDirectCall(state, term.target, term.args.length)
       if (direct) {
+        // - lower int arith builtins (iadd etc.) to native instructions
+        const op = INT_ARITH_OPS[direct.qualifiedName]
+        if (op) {
+          const value = generateCell(state, "value")
+          const instrs = [
+            ...arrayConcat(argInstrGroups),
+            B.Instr(op, [value], args, {}),
+          ]
+          return [instrs, value]
+        }
+
         const address = generateCell(state, "address")
         const value = generateCell(state, "value")
         const instrs = [
@@ -411,6 +430,40 @@ function resolvePackageId(pkg: M.Package, pkgName: string): string {
     throw new Error(`[resolvePackageId] unknown package: "${pkgName}"`)
   }
   return dep.id
+}
+
+// - map builtin int arith names to basic instr ops, so that the
+//   select pass can inline them to native instructions instead of
+//   calling the runtime extern (port of INT_ARITH_OPS from xvm backend).
+// - note: comparisons lower to icmp-*, which produce a raw 0/1 bool
+//   (the x86 backend's bool representation).
+const INT_ARITH_OPS: Record<string, string> = {
+  "meta-builtin/builtin/iadd": "iadd",
+  "meta-builtin/builtin/isub": "isub",
+  "meta-builtin/builtin/imul": "imul",
+  "meta-builtin/builtin/idiv": "idiv",
+  "meta-builtin/builtin/imod": "imod",
+  "meta-builtin/builtin/ineg": "ineg",
+  "meta-builtin/builtin/int-greater": "icmp-gt",
+  "meta-builtin/builtin/int-less": "icmp-lt",
+  "meta-builtin/builtin/int-greater-or-equal": "icmp-ge",
+  "meta-builtin/builtin/int-less-or-equal": "icmp-le",
+  "meta-builtin/builtin/int-is-positive": "int-is-positive",
+  "meta-builtin/builtin/int-is-non-negative": "int-is-non-negative",
+  "meta-builtin/builtin/int-is-non-zero": "int-is-non-zero",
+  "meta-builtin/内置/整数加": "iadd",
+  "meta-builtin/内置/整数减": "isub",
+  "meta-builtin/内置/整数乘": "imul",
+  "meta-builtin/内置/整数除": "idiv",
+  "meta-builtin/内置/整数模": "imod",
+  "meta-builtin/内置/整数负": "ineg",
+  "meta-builtin/内置/整数大于": "icmp-gt",
+  "meta-builtin/内置/整数小于": "icmp-lt",
+  "meta-builtin/内置/整数大于等于": "icmp-ge",
+  "meta-builtin/内置/整数小于等于": "icmp-le",
+  "meta-builtin/内置/整数为正": "int-is-positive",
+  "meta-builtin/内置/整数非负": "int-is-non-negative",
+  "meta-builtin/内置/整数非零": "int-is-non-zero",
 }
 
 function tryResolveDirectCall(

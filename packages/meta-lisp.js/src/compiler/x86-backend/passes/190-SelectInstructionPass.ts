@@ -24,7 +24,7 @@ function selectDefinition(
 ): Array<X86.Stmt> {
   switch (definition.kind) {
     case "StructDefinition": {
-      // TODO
+      // - not supported yet, same as xvm backend.
       return []
     }
 
@@ -42,17 +42,20 @@ function selectDefinition(
     }
 
     case "VariableDefinition": {
-      // TODO
-      return []
+      // - a variable is an 8-byte slot in the space segment.
+      //   setup-variables stores the ©setup.<name> initial value into it.
+      return [X86.DefineSpaceStmt(definition.name, X86.IntData(8n))]
     }
 
     case "ExternFunctionDefinition": {
-      // TODO
+      // - no native code; `address` references and calls are emitted
+      //   as extern fixups, resolved by the loader.
       return []
     }
 
     case "ExternVariableDefinition": {
-      // TODO
+      // - no native code; `address` references are emitted as extern
+      //   fixups, resolved by the loader (e.g. true/false/void).
       return []
     }
   }
@@ -80,7 +83,6 @@ const PAYLOAD_MASK = -8n
 const binaryX86Op: Record<string, string> = {
   iadd: "add",
   isub: "sub",
-  imul: "imul",
   and: "and",
   or: "or",
   xor: "xor",
@@ -142,6 +144,81 @@ function selectBinaryOp(instr: B.Instr): Array<X86.Instr> {
   ]
 }
 
+// - iadd/isub operate directly on tagged values: (a<<3)±(b<<3)=(a±b)<<3.
+// - imul/idiv/imod must untag first: (a<<3)*(b<<3)=(a*b)<<6, which is wrong.
+// - ineg: 0 - a on tagged values.
+
+function selectIntArith(instr: B.Instr): Array<X86.Instr> {
+  const [out] = instr.output
+
+  if (instr.op === "imul") {
+    const [a, b] = instr.input
+    return [
+      X86.Instr("mov", [X86.RegOperand("rax"), cellToVar(a)]),
+      X86.Instr("sar", [X86.RegOperand("rax"), X86.ImmOperand(TAG_BITS)]),
+      X86.Instr("mov", [X86.RegOperand("rdx"), cellToVar(b)]),
+      X86.Instr("sar", [X86.RegOperand("rdx"), X86.ImmOperand(TAG_BITS)]),
+      X86.Instr("imul", [X86.RegOperand("rax"), X86.RegOperand("rdx")]),
+      X86.Instr("shl", [X86.RegOperand("rax"), X86.ImmOperand(TAG_BITS)]),
+      X86.Instr("mov", [cellToVar(out), X86.RegOperand("rax")]),
+    ]
+  }
+
+  if (instr.op === "ineg") {
+    const [a] = instr.input
+    return [
+      X86.Instr("mov", [X86.RegOperand("rdx"), cellToVar(a)]),
+      X86.Instr("mov", [cellToVar(out), X86.ImmOperand(0n)]),
+      X86.Instr("sub", [cellToVar(out), X86.RegOperand("rdx")]),
+    ]
+  }
+
+  if (instr.op === "idiv" || instr.op === "imod") {
+    const [a, b] = instr.input
+    const takeRemainder = instr.op === "imod"
+    return [
+      X86.Instr("mov", [X86.RegOperand("rcx"), cellToVar(b)]),
+      X86.Instr("sar", [X86.RegOperand("rcx"), X86.ImmOperand(TAG_BITS)]),
+      X86.Instr("mov", [X86.RegOperand("rax"), cellToVar(a)]),
+      X86.Instr("sar", [X86.RegOperand("rax"), X86.ImmOperand(TAG_BITS)]),
+      X86.Instr("cqo", []),
+      X86.Instr("idiv", [X86.RegOperand("rcx")]),
+      X86.Instr("shl", [
+        X86.RegOperand(takeRemainder ? "rdx" : "rax"),
+        X86.ImmOperand(TAG_BITS),
+      ]),
+      X86.Instr("mov", [
+        cellToVar(out),
+        X86.RegOperand(takeRemainder ? "rdx" : "rax"),
+      ]),
+    ]
+  }
+
+  throw new Error(`[selectIntArith] unhandled op: ${instr.op}`)
+}
+
+// - int-is-* predicates return a raw 0/1 bool (cmp + set + movzx).
+
+const intIsCc: Record<string, string> = {
+  "int-is-positive": "g",
+  "int-is-non-negative": "ge",
+  "int-is-non-zero": "ne",
+}
+
+function selectIntIs(instr: B.Instr): Array<X86.Instr> {
+  const [a] = instr.input
+  const [out] = instr.output
+  const cc = intIsCc[instr.op]
+  return [
+    X86.Instr("cmp", [cellToVar(a), X86.ImmOperand(0n)]),
+    X86.Instr("set", [X86.CcOperand(cc), X86.RegOperand("al")]),
+    X86.Instr("movzx", [cellToVar(out), X86.RegOperand("al")]),
+    // - note: booleans are tagged (see icmp), matching extern semantics.
+    X86.Instr("shl", [cellToVar(out), X86.ImmOperand(TAG_BITS)]),
+    X86.Instr("or", [cellToVar(out), X86.ImmOperand(IMMEDIATE_TAG)]),
+  ]
+}
+
 function selectBlock(
   basicBlock: B.Block,
   basicProgram: B.Program,
@@ -188,7 +265,6 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
 
     case "iadd":
     case "isub":
-    case "imul":
     case "and":
     case "or":
     case "xor":
@@ -198,6 +274,19 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
     case "bitor":
     case "bitxor": {
       return selectBinaryOp(instr)
+    }
+
+    case "imul":
+    case "idiv":
+    case "imod":
+    case "ineg": {
+      return selectIntArith(instr)
+    }
+
+    case "int-is-positive":
+    case "int-is-non-negative":
+    case "int-is-non-zero": {
+      return selectIntIs(instr)
     }
 
     case "not": {
@@ -212,6 +301,14 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
     case "tag-int": {
       const [a] = instr.input
       const [out] = instr.output
+      // - fold `int64 c; tag-int` into a single load of (c << 3).
+      if (B.ssaIsDefinedByOp(state.ssaGraph, a.id, "int64")) {
+        const definer = B.ssaGetDefiner(state.ssaGraph, a.id)
+        const value = B.expectInt(definer.attributes, "content")
+        return [
+          X86.Instr("mov", [cellToVar(out), X86.ImmOperand(value << TAG_BITS)]),
+        ]
+      }
       return [
         X86.Instr("mov", [cellToVar(out), cellToVar(a)]),
         X86.Instr("shl", [cellToVar(out), X86.ImmOperand(TAG_BITS)]),
@@ -240,6 +337,12 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
     case "to-bool": {
       const [a] = instr.input
       const [out] = instr.output
+      // - if this to-bool feeds a folded branch (icmpMap), the branch
+      //   jumps on the raw comparison directly; the bool value is never
+      //   read, so drop the conversion entirely.
+      if (state.icmpMap.has(out.id)) {
+        return []
+      }
       return [
         X86.Instr("mov", [cellToVar(out), cellToVar(a)]),
         X86.Instr("shr", [cellToVar(out), X86.ImmOperand(TAG_BITS)]),
@@ -264,8 +367,21 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
 
       const user = B.ssaGetSoleUser(state.ssaGraph, out.id)
 
+      // - fold through a single to-bool: `(if (int-less-or-equal a b) ...)`
+      //   lowers straight to `cmp a, b; jcc`, skipping the bool round-trip.
+      let branchCondId: string | undefined
       if (user?.op === "branch") {
-        state.icmpMap.set(out.id, { cc, a: a.id, b: b.id })
+        branchCondId = out.id
+      } else if (user?.op === "to-bool") {
+        const [toBoolOut] = user.output
+        const user2 = B.ssaGetSoleUser(state.ssaGraph, toBoolOut.id)
+        if (user2?.op === "branch") {
+          branchCondId = toBoolOut.id
+        }
+      }
+
+      if (branchCondId !== undefined) {
+        state.icmpMap.set(branchCondId, { cc, a: a.id, b: b.id })
         return []
       }
 
@@ -273,6 +389,10 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
         X86.Instr("cmp", [cellToVar(a), cellToVar(b)]),
         X86.Instr("set", [X86.CcOperand(cc), X86.RegOperand("al")]),
         X86.Instr("movzx", [cellToVar(out), X86.RegOperand("al")]),
+        // - note: booleans are tagged (x_false=0b00110 / x_true=0b01110),
+        //   like the extern `true`/`false` variables and to-bool expects.
+        X86.Instr("shl", [cellToVar(out), X86.ImmOperand(TAG_BITS)]),
+        X86.Instr("or", [cellToVar(out), X86.ImmOperand(IMMEDIATE_TAG)]),
       ]
     }
 
@@ -326,7 +446,14 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
     case "address": {
       const [out] = instr.output
       const name = B.expectSymbol(instr.attributes, "name")
-      return [X86.Instr("mov", [cellToVar(out), X86.AddressOperand(name)])]
+      const definition = B.programLookupDefinition(state.basicProgram, name)
+      const isExtern =
+        definition?.kind === "ExternFunctionDefinition" ||
+        definition?.kind === "ExternVariableDefinition"
+      const operand = isExtern
+        ? X86.ExternOperand(name)
+        : X86.AddressOperand(name)
+      return [X86.Instr("mov", [cellToVar(out), operand])]
     }
 
     case "symbol-value": {
@@ -381,11 +508,15 @@ function selectInstr(state: SelectState, instr: B.Instr): Array<X86.Instr> {
 
     case "store": {
       const [ptr, val] = instr.input
+      // - note: must not emit `mov [rax], val` (two memory operands) because
+      //   PatchInstructionsPass would route val through rax and overwrite the
+      //   ptr base address. Use rdx for val explicitly.
       return [
         X86.Instr("mov", [X86.RegOperand("rax"), X86.VarOperand(ptr.id)]),
+        X86.Instr("mov", [X86.RegOperand("rdx"), cellToVar(val)]),
         X86.Instr("mov", [
           X86.RegMemOperand("qword", "rax", undefined, undefined, undefined),
-          cellToVar(val),
+          X86.RegOperand("rdx"),
         ]),
       ]
     }

@@ -1,7 +1,9 @@
 (module builtin)
 
-(exempt make-closure closure-put-arg closure-arg)
+(exempt make-closure closure-put-arg closure-arg closure-fn)
 
 (declare-primitive-function make-closure 2)
 (declare-primitive-function closure-put-arg 3)
 (declare-primitive-function closure-arg 2)
+;; - note: closure-fn is used by the x86 backend for indirect calls
+(declare-primitive-function closure-fn 1)

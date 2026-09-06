@@ -72,6 +72,10 @@ export function encodeMov(instr: Instr): Array<EncodedInstruction> {
     if (src.kind === "AddressOperand") {
       return encodeMovMemAddress(dest, src)
     }
+
+    if (src.kind === "ExternOperand") {
+      return encodeMovMemExtern(dest, src)
+    }
   }
 
   let message = `[mov] unsupported operand combination: dest=${dest.kind} src=${src.kind}`
@@ -339,6 +343,32 @@ function encodeMovMemAddress(
     immediate: null,
   }
   return [lea, mov]
+}
+
+function encodeMovMemExtern(
+  dest: X86.Operand,
+  _src: ExternOperand,
+): Array<EncodedInstruction> {
+  const movabs: EncodedInstruction = {
+    prefixes: [],
+    rex: 0x48,
+    opcode: [0xb8],
+    modRM: null,
+    sib: null,
+    displacement: null,
+    immediate: { size: 8, value: 0n },
+  }
+  const { modrm, sib, disp, rexRm, rexIndex } = encodeMem(dest)
+  const mov: EncodedInstruction = {
+    prefixes: [],
+    rex: computeRex(true, null, rexIndex, rexRm),
+    opcode: [0x89],
+    modRM: modrm.codeForReg(regCode("rax")),
+    sib: sib,
+    displacement: disp,
+    immediate: null,
+  }
+  return [movabs, mov]
 }
 
 function encodeMovRegExtern(

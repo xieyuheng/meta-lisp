@@ -19,7 +19,9 @@ export function InjectMainAndTestPass(
     X86.CodeDefinition("test", [
       X86.Instr("call", [X86.LabelOperand("setup-variables")]),
       X86.Instr("call", [X86.LabelOperand("run-tests")]),
-      X86.Instr("ret", []),
+      // - note: return must go through the epilog (restore rbp),
+      //   a bare `ret` would pop rbp as the return address.
+      X86.Instr("jmp", [X86.LabelOperand("epilog")]),
     ]),
   )
 
@@ -34,7 +36,7 @@ export function InjectMainAndTestPass(
       X86.CodeDefinition("main", [
         X86.Instr("call", [X86.LabelOperand("setup-variables")]),
         X86.Instr("call", [X86.LabelOperand(entryName)]),
-        X86.Instr("ret", []),
+        X86.Instr("jmp", [X86.LabelOperand("epilog")]),
       ]),
     )
   }
