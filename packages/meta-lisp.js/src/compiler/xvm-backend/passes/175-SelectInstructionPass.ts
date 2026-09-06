@@ -21,18 +21,12 @@ export function SelectInstructionPass(program: B.Program): Xvm.Program {
       }
 
       case "ExternFunctionDefinition": {
-        xvmProgram.definitions.set(
-          name,
-          Xvm.PrimitiveFunctionDeclaration(name),
-        )
+        xvmProgram.definitions.set(name, Xvm.PrimitiveFunctionDeclaration(name))
         break
       }
 
       case "ExternVariableDefinition": {
-        xvmProgram.definitions.set(
-          name,
-          Xvm.PrimitiveVariableDeclaration(name),
-        )
+        xvmProgram.definitions.set(name, Xvm.PrimitiveVariableDeclaration(name))
         break
       }
     }
