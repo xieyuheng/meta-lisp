@@ -13,18 +13,18 @@ value_t parse_located_sexps(const char *pathname, const char *string) {
   lexer_free(lexer);
 
   value_t path = x_object(make_xtext(pathname));
-  value_t sexps = x_make_list();
+  value_t sexps = x_make_array();
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
       break;
     }
 
-    x_list_push_mut(for_sexp(path, tokens), sexps);
+    x_array_push_mut(for_sexp(path, tokens), sexps);
   }
 
   list_free(tokens);
-  return sexps;
+  return x_array_to_list(sexps);
 }
 
 void ignore_line_comments(list_t *tokens) {
@@ -79,7 +79,7 @@ static value_t list_sexp(value_t elements, value_t location) {
   value_t sexp = x_make_array();
   value_t tag = x_object(intern_symbol("list-sexp"));
   x_array_push_mut(tag, sexp);
-  x_array_push_mut(elements, sexp);
+  x_array_push_mut(xlist_to_cons(to_xlist(elements)), sexp);
   x_array_push_mut(location, sexp);
   return sexp;
 }
@@ -150,9 +150,9 @@ static value_t for_sexp(value_t path, list_t *tokens) {
       exit(1);
     }
 
-    value_t elements = x_make_list();
-    x_list_push_mut(head, elements);
-    x_list_push_mut(for_sexp(path, tokens), elements);
+    value_t elements = x_object(make_xlist());
+    xlist_push(to_xlist(elements), head);
+    xlist_push(to_xlist(elements), for_sexp(path, tokens));
     token_free(token);
     return list_sexp(elements, location);
   }
@@ -174,7 +174,7 @@ static value_t for_sexp(value_t path, list_t *tokens) {
       value_t location = make_source_location_sexp(path, value_from_span(span));
       value_t content = x_object(intern_symbol("@square-bracket"));
       value_t head = symbol_sexp(content, location);
-      x_list_push_front_mut(head, elements);
+      xlist_push_front(to_xlist(elements), head);
       token_free(token);
       return list_sexp(elements, location);
     } else if (string_equal(token->content, "{")) {
@@ -185,7 +185,7 @@ static value_t for_sexp(value_t path, list_t *tokens) {
       value_t location = make_source_location_sexp(path, value_from_span(span));
       value_t content = x_object(intern_symbol("@curly-bracket"));
       value_t head = symbol_sexp(content, location);
-      x_list_push_front_mut(head, elements);
+      xlist_push_front(to_xlist(elements), head);
       token_free(token);
       return list_sexp(elements, location);
     } else {
@@ -210,7 +210,7 @@ static value_t for_sexp(value_t path, list_t *tokens) {
 
 static value_t for_elements(value_t path, const char *end, list_t *tokens,
                             struct span_t *out_end_span) {
-  value_t sexp = x_make_list();
+  value_t sexp = x_object(make_xlist());
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
@@ -232,7 +232,7 @@ static value_t for_elements(value_t path, const char *end, list_t *tokens,
         exit(1);
       }
     } else {
-      x_list_push_mut(for_sexp(path, tokens), sexp);
+      xlist_push(to_xlist(sexp), for_sexp(path, tokens));
     }
   }
 }

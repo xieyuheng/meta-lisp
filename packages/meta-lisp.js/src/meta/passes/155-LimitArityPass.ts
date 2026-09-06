@@ -105,16 +105,7 @@ function limitArityTerm(term: C.Term, maxArity: number): C.Term {
             [arg, restList],
             term.location,
           ),
-        C.ApplyTerm(
-          C.QualifiedVarTerm(
-            "meta-builtin",
-            "builtin",
-            "make-list",
-            term.location,
-          ),
-          [],
-          term.location,
-        ),
+        C.QualifiedVarTerm("meta-builtin", "builtin", "null", term.location),
       )
 
       return C.ApplyTerm(target, [...firstArgs, restList], term.location)

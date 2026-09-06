@@ -156,17 +156,11 @@ void import_builtin_zh(program_t *program) {
 
   // list
 
-  define_primitive_0(program, "meta-builtin/内置/作列表", x_make_list);
+  define_variable(program, "meta-builtin/内置/空列表", x_null);
   define_primitive_1(program, "meta-builtin/内置/为列表", x_is_any_list);
-  define_primitive_1(program, "meta-builtin/内置/列表复制", x_list_copy);
   define_primitive_1(program, "meta-builtin/内置/列表长度", x_list_length);
   define_primitive_1(program, "meta-builtin/内置/列表为空", x_list_is_empty);
-  define_primitive_1(program, "meta-builtin/内置/列表末出", x_list_pop_mut);
-  define_primitive_2(program, "meta-builtin/内置/列表末入", x_list_push_mut);
-  define_primitive_1(program, "meta-builtin/内置/列表首出", x_list_pop_front_mut);
-  define_primitive_2(program, "meta-builtin/内置/列表首入", x_list_push_front_mut);
   define_primitive_2(program, "meta-builtin/内置/列表取", x_list_get);
-  define_primitive_3(program, "meta-builtin/内置/列表存", x_list_put_mut);
   define_primitive_3(program, "meta-builtin/内置/列表复制存", x_list_put);
   define_primitive_1(program, "meta-builtin/内置/首", x_car);
   define_primitive_1(program, "meta-builtin/内置/余", x_cdr);
@@ -175,7 +169,6 @@ void import_builtin_zh(program_t *program) {
   define_primitive_1(program, "meta-builtin/内置/列表去首", x_list_rest);
   define_primitive_1(program, "meta-builtin/内置/列表去末", x_list_but_last);
   define_primitive_1(program, "meta-builtin/内置/列表末项", x_list_last);
-  define_primitive_1(program, "meta-builtin/内置/列表反转", x_list_reverse_mut);
   define_primitive_1(program, "meta-builtin/内置/列表复制反转", x_list_reverse);
   define_primitive_1(program, "meta-builtin/内置/列表转集合", x_list_to_set);
 

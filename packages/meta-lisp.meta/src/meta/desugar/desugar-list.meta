@@ -11,8 +11,5 @@
         (qualified-var-exp 'meta-builtin 'builtin 'cons location)
         (@list element acc)
         location))
-    (apply-exp
-      (qualified-var-exp 'meta-builtin 'builtin 'make-list location)
-      (@list)
-      location)
+    (qualified-var-exp 'meta-builtin 'builtin 'null location)
     elements))

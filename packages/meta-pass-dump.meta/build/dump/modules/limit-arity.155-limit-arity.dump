@@ -30,4 +30,4 @@
      7
      (meta-builtin/builtin/cons
       8
-      (meta-builtin/builtin/cons 9 (meta-builtin/builtin/make-list)))))))
+      (meta-builtin/builtin/cons 9 meta-builtin/builtin/null))))))

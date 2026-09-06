@@ -53,10 +53,10 @@ value_t x_array_reverse_mut(value_t array) {
 }
 
 value_t x_array_to_list(value_t array) {
-  value_t list = x_make_list();
   size_t length = array_length(to_xarray(array)->elements);
-  for (size_t i = 0; i < length; i++) {
-    xlist_push(to_xlist(list), xarray_get(to_xarray(array), i));
+  value_t list = x_null;
+  for (size_t i = length; i > 0; i--) {
+    list = x_cons(xarray_get(to_xarray(array), i - 1), list);
   }
 
   return list;
@@ -64,9 +64,9 @@ value_t x_array_to_list(value_t array) {
 
 value_t x_list_to_array(value_t list) {
   value_t array = x_make_array();
-  size_t length = array_length(to_xlist(list)->elements);
-  for (size_t i = 0; i < length; i++) {
-    xarray_push(to_xarray(array), xlist_get(to_xlist(list), i));
+  while (is_cons(list)) {
+    xarray_push(to_xarray(array), to_cons(list)->car);
+    list = to_cons(list)->cdr;
   }
 
   return array;

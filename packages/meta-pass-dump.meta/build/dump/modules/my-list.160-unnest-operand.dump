@@ -43,95 +43,97 @@
 (define (my-list-head list)
   (if (self/my-list/is-nil list)
     (let ((unnested.1 (meta-builtin/builtin/format list)))
-      (let ((unnested.2 (meta-builtin/builtin/make-list)))
-        (let ((unnested.3 (meta-builtin/builtin/cons unnested.1 unnested.2)))
-          (let ((unnested.4 (meta-builtin/builtin/cons " " unnested.3)))
-            (let
-                ((unnested.5
-                  (meta-builtin/builtin/cons "pattern mismatch on:" unnested.4)))
-              (let ((unnested.6 (meta-builtin/builtin/text-concat unnested.5)))
+      (let
+          ((unnested.2
+            (meta-builtin/builtin/cons unnested.1 meta-builtin/builtin/null)))
+        (let ((unnested.3 (meta-builtin/builtin/cons " " unnested.2)))
+          (let
+              ((unnested.4
+                (meta-builtin/builtin/cons "pattern mismatch on:" unnested.3)))
+            (let ((unnested.5 (meta-builtin/builtin/text-concat unnested.4)))
+              (let
+                  ((unnested.6
+                    (meta-builtin/builtin/make-source-position 123 7 3)))
                 (let
                     ((unnested.7
-                      (meta-builtin/builtin/make-source-position 123 7 3)))
+                      (meta-builtin/builtin/make-source-position 128 7 8)))
                   (let
                       ((unnested.8
-                        (meta-builtin/builtin/make-source-position 128 7 8)))
+                        (meta-builtin/builtin/make-source-span
+                         unnested.6
+                         unnested.7)))
                     (let
                         ((unnested.9
-                          (meta-builtin/builtin/make-source-span
-                           unnested.7
+                          (meta-builtin/builtin/make-source-location
+                           "src/my-list.meta"
                            unnested.8)))
-                      (let
-                          ((unnested.10
-                            (meta-builtin/builtin/make-source-location
-                             "src/my-list.meta"
-                             unnested.9)))
-                        (meta-builtin/builtin/error-with-location
-                         unnested.6
-                         unnested.10)))))))))))
+                      (meta-builtin/builtin/error-with-location
+                       unnested.5
+                       unnested.9))))))))))
     (if (self/my-list/is-li list)
       (let ((tail (self/my-list/li-tail list)))
         (let ((head (self/my-list/li-head list))) head))
-      (let ((unnested.11 (meta-builtin/builtin/make-source-position 123 7 3)))
-        (let ((unnested.12 (meta-builtin/builtin/make-source-position 128 7 8)))
+      (let ((unnested.10 (meta-builtin/builtin/make-source-position 123 7 3)))
+        (let ((unnested.11 (meta-builtin/builtin/make-source-position 128 7 8)))
           (let
-              ((unnested.13
-                (meta-builtin/builtin/make-source-span unnested.11 unnested.12)))
+              ((unnested.12
+                (meta-builtin/builtin/make-source-span unnested.10 unnested.11)))
             (let
-                ((unnested.14
+                ((unnested.13
                   (meta-builtin/builtin/make-source-location
                    "src/my-list.meta"
-                   unnested.13)))
+                   unnested.12)))
               (meta-builtin/builtin/error-with-location
                "cond mismatch"
-               unnested.14))))))))
+               unnested.13))))))))
 
 (define (my-list-rest list)
   (if (self/my-list/is-nil list)
     (let ((unnested.1 (meta-builtin/builtin/format list)))
-      (let ((unnested.2 (meta-builtin/builtin/make-list)))
-        (let ((unnested.3 (meta-builtin/builtin/cons unnested.1 unnested.2)))
-          (let ((unnested.4 (meta-builtin/builtin/cons " " unnested.3)))
-            (let
-                ((unnested.5
-                  (meta-builtin/builtin/cons "pattern mismatch on:" unnested.4)))
-              (let ((unnested.6 (meta-builtin/builtin/text-concat unnested.5)))
+      (let
+          ((unnested.2
+            (meta-builtin/builtin/cons unnested.1 meta-builtin/builtin/null)))
+        (let ((unnested.3 (meta-builtin/builtin/cons " " unnested.2)))
+          (let
+              ((unnested.4
+                (meta-builtin/builtin/cons "pattern mismatch on:" unnested.3)))
+            (let ((unnested.5 (meta-builtin/builtin/text-concat unnested.4)))
+              (let
+                  ((unnested.6
+                    (meta-builtin/builtin/make-source-position 194 11 3)))
                 (let
                     ((unnested.7
-                      (meta-builtin/builtin/make-source-position 194 11 3)))
+                      (meta-builtin/builtin/make-source-position 199 11 8)))
                   (let
                       ((unnested.8
-                        (meta-builtin/builtin/make-source-position 199 11 8)))
+                        (meta-builtin/builtin/make-source-span
+                         unnested.6
+                         unnested.7)))
                     (let
                         ((unnested.9
-                          (meta-builtin/builtin/make-source-span
-                           unnested.7
+                          (meta-builtin/builtin/make-source-location
+                           "src/my-list.meta"
                            unnested.8)))
-                      (let
-                          ((unnested.10
-                            (meta-builtin/builtin/make-source-location
-                             "src/my-list.meta"
-                             unnested.9)))
-                        (meta-builtin/builtin/error-with-location
-                         unnested.6
-                         unnested.10)))))))))))
+                      (meta-builtin/builtin/error-with-location
+                       unnested.5
+                       unnested.9))))))))))
     (if (self/my-list/is-li list)
       (let ((tail (self/my-list/li-tail list)))
         (let ((head (self/my-list/li-head list))) tail))
-      (let ((unnested.11 (meta-builtin/builtin/make-source-position 194 11 3)))
+      (let ((unnested.10 (meta-builtin/builtin/make-source-position 194 11 3)))
         (let
-            ((unnested.12 (meta-builtin/builtin/make-source-position 199 11 8)))
+            ((unnested.11 (meta-builtin/builtin/make-source-position 199 11 8)))
           (let
-              ((unnested.13
-                (meta-builtin/builtin/make-source-span unnested.11 unnested.12)))
+              ((unnested.12
+                (meta-builtin/builtin/make-source-span unnested.10 unnested.11)))
             (let
-                ((unnested.14
+                ((unnested.13
                   (meta-builtin/builtin/make-source-location
                    "src/my-list.meta"
-                   unnested.13)))
+                   unnested.12)))
               (meta-builtin/builtin/error-with-location
                "cond mismatch"
-               unnested.14))))))))
+               unnested.13))))))))
 
 (define (my-list-length list)
   (if (self/my-list/is-nil list)
@@ -258,184 +260,183 @@
           (if (self/my-list/is-nil list1)
             (let ((unnested.1 (meta-builtin/builtin/format list1)))
               (let ((unnested.2 (meta-builtin/builtin/format list2)))
-                (let ((unnested.3 (meta-builtin/builtin/make-list)))
-                  (let
-                      ((unnested.4
-                        (meta-builtin/builtin/cons unnested.2 unnested.3)))
+                (let
+                    ((unnested.3
+                      (meta-builtin/builtin/cons
+                       unnested.2
+                       meta-builtin/builtin/null)))
+                  (let ((unnested.4 (meta-builtin/builtin/cons " " unnested.3)))
                     (let
-                        ((unnested.5 (meta-builtin/builtin/cons " " unnested.4)))
+                        ((unnested.5
+                          (meta-builtin/builtin/cons unnested.1 unnested.4)))
                       (let
                           ((unnested.6
-                            (meta-builtin/builtin/cons unnested.1 unnested.5)))
+                            (meta-builtin/builtin/cons " " unnested.5)))
                         (let
                             ((unnested.7
-                              (meta-builtin/builtin/cons " " unnested.6)))
+                              (meta-builtin/builtin/cons
+                               "pattern mismatch on:"
+                               unnested.6)))
                           (let
                               ((unnested.8
-                                (meta-builtin/builtin/cons
-                                 "pattern mismatch on:"
-                                 unnested.7)))
+                                (meta-builtin/builtin/text-concat unnested.7)))
                             (let
                                 ((unnested.9
-                                  (meta-builtin/builtin/text-concat unnested.8)))
+                                  (meta-builtin/builtin/make-source-position
+                                   873
+                                   37
+                                   3)))
                               (let
                                   ((unnested.10
                                     (meta-builtin/builtin/make-source-position
-                                     873
+                                     884
                                      37
-                                     3)))
+                                     14)))
                                 (let
                                     ((unnested.11
-                                      (meta-builtin/builtin/make-source-position
-                                       884
-                                       37
-                                       14)))
+                                      (meta-builtin/builtin/make-source-span
+                                       unnested.9
+                                       unnested.10)))
                                   (let
                                       ((unnested.12
-                                        (meta-builtin/builtin/make-source-span
-                                         unnested.10
+                                        (meta-builtin/builtin/make-source-location
+                                         "src/my-list.meta"
                                          unnested.11)))
-                                    (let
-                                        ((unnested.13
-                                          (meta-builtin/builtin/make-source-location
-                                           "src/my-list.meta"
-                                           unnested.12)))
-                                      (meta-builtin/builtin/error-with-location
-                                       unnested.9
-                                       unnested.13))))))))))))))
+                                    (meta-builtin/builtin/error-with-location
+                                     unnested.8
+                                     unnested.12)))))))))))))
             (if (self/my-list/is-li list1)
               (if (self/my-list/is-nil list2)
-                (let ((unnested.14 (meta-builtin/builtin/format list1)))
-                  (let ((unnested.15 (meta-builtin/builtin/format list2)))
-                    (let ((unnested.16 (meta-builtin/builtin/make-list)))
+                (let ((unnested.13 (meta-builtin/builtin/format list1)))
+                  (let ((unnested.14 (meta-builtin/builtin/format list2)))
+                    (let
+                        ((unnested.15
+                          (meta-builtin/builtin/cons
+                           unnested.14
+                           meta-builtin/builtin/null)))
                       (let
-                          ((unnested.17
-                            (meta-builtin/builtin/cons unnested.15 unnested.16)))
+                          ((unnested.16
+                            (meta-builtin/builtin/cons " " unnested.15)))
                         (let
-                            ((unnested.18
-                              (meta-builtin/builtin/cons " " unnested.17)))
+                            ((unnested.17
+                              (meta-builtin/builtin/cons unnested.13 unnested.16)))
                           (let
-                              ((unnested.19
-                                (meta-builtin/builtin/cons
-                                 unnested.14
-                                 unnested.18)))
+                              ((unnested.18
+                                (meta-builtin/builtin/cons " " unnested.17)))
                             (let
-                                ((unnested.20
-                                  (meta-builtin/builtin/cons " " unnested.19)))
+                                ((unnested.19
+                                  (meta-builtin/builtin/cons
+                                   "pattern mismatch on:"
+                                   unnested.18)))
                               (let
-                                  ((unnested.21
-                                    (meta-builtin/builtin/cons
-                                     "pattern mismatch on:"
-                                     unnested.20)))
+                                  ((unnested.20
+                                    (meta-builtin/builtin/text-concat
+                                     unnested.19)))
                                 (let
-                                    ((unnested.22
-                                      (meta-builtin/builtin/text-concat
-                                       unnested.21)))
+                                    ((unnested.21
+                                      (meta-builtin/builtin/make-source-position
+                                       873
+                                       37
+                                       3)))
                                   (let
-                                      ((unnested.23
+                                      ((unnested.22
                                         (meta-builtin/builtin/make-source-position
-                                         873
+                                         884
                                          37
-                                         3)))
+                                         14)))
                                     (let
-                                        ((unnested.24
-                                          (meta-builtin/builtin/make-source-position
-                                           884
-                                           37
-                                           14)))
+                                        ((unnested.23
+                                          (meta-builtin/builtin/make-source-span
+                                           unnested.21
+                                           unnested.22)))
                                       (let
-                                          ((unnested.25
-                                            (meta-builtin/builtin/make-source-span
-                                             unnested.23
-                                             unnested.24)))
-                                        (let
-                                            ((unnested.26
-                                              (meta-builtin/builtin/make-source-location
-                                               "src/my-list.meta"
-                                               unnested.25)))
-                                          (meta-builtin/builtin/error-with-location
-                                           unnested.22
-                                           unnested.26))))))))))))))
+                                          ((unnested.24
+                                            (meta-builtin/builtin/make-source-location
+                                             "src/my-list.meta"
+                                             unnested.23)))
+                                        (meta-builtin/builtin/error-with-location
+                                         unnested.20
+                                         unnested.24)))))))))))))
                 (if (self/my-list/is-li list2)
                   (let ((tail2 (self/my-list/li-tail list2)))
                     (let ((head2 (self/my-list/li-head list2)))
                       (let ((tail1 (self/my-list/li-tail list1)))
                         (let ((head1 (self/my-list/li-head list1)))
-                          (let ((unnested.27 (f head1 head2)))
+                          (let ((unnested.25 (f head1 head2)))
                             (let
-                                ((unnested.28
+                                ((unnested.26
                                   (self/my-list/my-list-zip-map-2 f tail1 tail2)))
-                              (self/my-list/li unnested.27 unnested.28)))))))
+                              (self/my-list/li unnested.25 unnested.26)))))))
                   (let
-                      ((unnested.29
+                      ((unnested.27
                         (meta-builtin/builtin/make-source-position 873 37 3)))
                     (let
-                        ((unnested.30
+                        ((unnested.28
                           (meta-builtin/builtin/make-source-position 884 37 14)))
                       (let
-                          ((unnested.31
+                          ((unnested.29
                             (meta-builtin/builtin/make-source-span
-                             unnested.29
-                             unnested.30)))
+                             unnested.27
+                             unnested.28)))
                         (let
-                            ((unnested.32
+                            ((unnested.30
                               (meta-builtin/builtin/make-source-location
                                "src/my-list.meta"
-                               unnested.31)))
+                               unnested.29)))
                           (meta-builtin/builtin/error-with-location
                            "cond mismatch"
-                           unnested.32)))))))
+                           unnested.30)))))))
               (let
-                  ((unnested.33
+                  ((unnested.31
                     (meta-builtin/builtin/make-source-position 873 37 3)))
                 (let
-                    ((unnested.34
+                    ((unnested.32
                       (meta-builtin/builtin/make-source-position 884 37 14)))
                   (let
-                      ((unnested.35
+                      ((unnested.33
                         (meta-builtin/builtin/make-source-span
-                         unnested.33
-                         unnested.34)))
+                         unnested.31
+                         unnested.32)))
                     (let
-                        ((unnested.36
+                        ((unnested.34
                           (meta-builtin/builtin/make-source-location
                            "src/my-list.meta"
-                           unnested.35)))
+                           unnested.33)))
                       (meta-builtin/builtin/error-with-location
                        "cond mismatch"
-                       unnested.36)))))))
+                       unnested.34)))))))
           (let
-              ((unnested.37 (meta-builtin/builtin/make-source-position 873 37 3)))
+              ((unnested.35 (meta-builtin/builtin/make-source-position 873 37 3)))
             (let
-                ((unnested.38
+                ((unnested.36
                   (meta-builtin/builtin/make-source-position 884 37 14)))
               (let
-                  ((unnested.39
+                  ((unnested.37
                     (meta-builtin/builtin/make-source-span
-                     unnested.37
-                     unnested.38)))
+                     unnested.35
+                     unnested.36)))
                 (let
-                    ((unnested.40
+                    ((unnested.38
                       (meta-builtin/builtin/make-source-location
                        "src/my-list.meta"
-                       unnested.39)))
+                       unnested.37)))
                   (meta-builtin/builtin/error-with-location
                    "cond mismatch"
-                   unnested.40)))))))
-      (let ((unnested.41 (meta-builtin/builtin/make-source-position 873 37 3)))
+                   unnested.38)))))))
+      (let ((unnested.39 (meta-builtin/builtin/make-source-position 873 37 3)))
         (let
-            ((unnested.42 (meta-builtin/builtin/make-source-position 884 37 14)))
+            ((unnested.40 (meta-builtin/builtin/make-source-position 884 37 14)))
           (let
-              ((unnested.43
-                (meta-builtin/builtin/make-source-span unnested.41 unnested.42)))
+              ((unnested.41
+                (meta-builtin/builtin/make-source-span unnested.39 unnested.40)))
             (let
-                ((unnested.44
+                ((unnested.42
                   (meta-builtin/builtin/make-source-location
                    "src/my-list.meta"
-                   unnested.43)))
+                   unnested.41)))
               (meta-builtin/builtin/error-with-location
                "cond mismatch"
-               unnested.44))))))))
+               unnested.42))))))))
 
 (define (my-list-adjacent-dedup list)
   (if (self/my-list/is-nil list)

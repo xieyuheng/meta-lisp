@@ -7,15 +7,15 @@
 
 (define (list-group f list)
   (let ((new-hash (@hash)))
-   (list-each
-     (lambda (value)
-       (let ((key (f value)))
-         (unless (hash-has key new-hash)
-           (hash-put key (@list value) new-hash))
-         (let ((group (hash-get key new-hash)))
-           (list-push value group))))
-     list)
-   new-hash))
+    (list-each
+      (lambda (value)
+        (let ((key (f value)))
+          (unless (hash-has key new-hash)
+            (hash-put key (make-array) new-hash))
+          (let ((group (hash-get key new-hash)))
+            (array-push value group))))
+      list)
+    (hash-map-value array-to-list new-hash)))
 
 (define-test list-group-test
   (assert-equal

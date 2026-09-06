@@ -36,14 +36,14 @@ value_t make_json_string(const char *s) {
 value_t make_json_array(void) {
   value_t v = x_object(make_xarray());
   xarray_push(to_xarray(v), x_object(intern_symbol("array-json")));
-  xarray_push(to_xarray(v), x_object(make_xlist()));
+  xarray_push(to_xarray(v), x_object(make_xarray()));
   return v;
 }
 
 void json_array_push(value_t array, value_t element) {
   xarray_t *xs = to_xarray(array);
-  xlist_t *elements = to_xlist(xarray_get(xs, 1));
-  xlist_push(elements, element);
+  xarray_t *elements = to_xarray(xarray_get(xs, 1));
+  xarray_push(elements, element);
 }
 
 value_t make_json_object(void) {
@@ -61,6 +61,31 @@ void json_object_put(value_t object, const char *key, value_t value) {
 
 // ── JSON parser ──
 
+// convert the internal array builders of array-json to cons lists
+
+static void convert_json_lists(value_t json) {
+  value_t tag = xarray_get(to_xarray(json), 0);
+  if (equal(tag, x_object(intern_symbol("array-json")))) {
+    value_t elements = xarray_get(to_xarray(json), 1);
+    value_t list = x_array_to_list(elements);
+    xarray_put(to_xarray(json), 1, list);
+    while (is_cons(list)) {
+      convert_json_lists(to_cons(list)->car);
+      list = to_cons(list)->cdr;
+    }
+  } else if (equal(tag, x_object(intern_symbol("object-json")))) {
+    value_t entries = xarray_get(to_xarray(json), 1);
+    xhash_t *hash = to_xhash(entries);
+    hash_iter_t iter;
+    hash_iter_init(&iter, hash->hash);
+    const hash_entry_t *entry = hash_iter_next_entry(&iter);
+    while (entry) {
+      convert_json_lists((value_t) entry->value);
+      entry = hash_iter_next_entry(&iter);
+    }
+  }
+}
+
 value_t parse_json(const char *string) {
   lexer_t *lexer = make_lexer(string);
   list_t *tokens = lexer_lex(lexer);
@@ -73,6 +98,7 @@ value_t parse_json(const char *string) {
   }
 
   value_t result = parse_value(tokens);
+  convert_json_lists(result);
 
   if (!list_is_empty(tokens)) {
     who_printf("trailing token after JSON value\n");
@@ -286,11 +312,13 @@ static void write_json_value(buffer_t *buffer, value_t json) {
     write_json_string_escaped(buffer, xtext_string(to_xtext(s)));
   } else if (string_equal(tag, "array-json")) {
     write_string(buffer, "[");
-    value_t elements = xarray_get(xs, 1);
-    xlist_t *elems = to_xlist(elements);
-    for (size_t i = 0; i < array_length(elems->elements); i++) {
-      if (i > 0) write_string(buffer, ", ");
-      write_json_value(buffer, xlist_get(elems, i));
+    value_t list = xarray_get(xs, 1);
+    bool first = true;
+    while (is_cons(list)) {
+      if (!first) write_string(buffer, ", ");
+      write_json_value(buffer, to_cons(list)->car);
+      first = false;
+      list = to_cons(list)->cdr;
     }
     write_string(buffer, "]");
   } else if (string_equal(tag, "object-json")) {

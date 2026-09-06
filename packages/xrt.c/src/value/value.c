@@ -166,6 +166,11 @@ void write_value_in_ctx(buffer_t *buffer, object_circle_ctx_t *ctx, value_t valu
     return;
   }
 
+  if (is_null(value)) {
+    write_template(buffer, "#null");
+    return;
+  }
+
   if (is_object(value)) {
     object_t *object = to_object(value);
     if (is_object_circle_start(ctx, object)) {

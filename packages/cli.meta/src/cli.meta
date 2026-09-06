@@ -20,7 +20,7 @@
 (claim new-router (-> text-t text-t router-t))
 
 (define (new-router name version)
-  (make-router name version (make-list) (make-hash)))
+  (make-router name version null (make-hash)))
 
 (claim parse-route (-> text-t route-t))
 
@@ -45,9 +45,9 @@
 (define (route-match route argv)
   (define (loop tokens args options passthrough in-passthrough)
     (cond ((list-is-empty tokens)
-           (make-ctx args options passthrough))
+           (make-ctx (array-to-list args) options (array-to-list passthrough)))
           ((equal in-passthrough true)
-           (list-push (car tokens) passthrough)
+           (array-push (car tokens) passthrough)
            (loop (cdr tokens) args options passthrough true))
           ((equal (car tokens) "--")
            (loop (cdr tokens) args options passthrough true))
@@ -62,16 +62,16 @@
                   (hash-put (car tokens) (car (cdr tokens)) options)
                   (loop (cdr (cdr tokens)) args options passthrough false))))
           (else
-           (list-push (car tokens) args)
+           (array-push (car tokens) args)
            (loop (cdr tokens) args options passthrough false))))
-  (loop argv (make-list) (make-hash) (make-list) false))
+  (loop argv (make-array) (make-hash) (make-array) false))
 
 (claim define-route (-> router-t text-t router-t))
 
 (define (define-route router command)
-  (let ((routes (router-routes router)))
-    (list-push (parse-route command) routes)
-    (router-put-routes routes router)))
+  (let ((command (parse-route command))
+         (routes (router-routes router)))
+    (router-put-routes (list-append routes (@list command)) router)))
 
 (claim define-handler (-> router-t text-t (-> ctx-t void-t) router-t))
 

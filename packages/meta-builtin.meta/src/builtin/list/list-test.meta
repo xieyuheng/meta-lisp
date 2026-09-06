@@ -1,12 +1,6 @@
 (module builtin)
 
 (define-test list-test
-  (let ((list (make-list)))
-    (list-push 1 list)
-    (list-push 2 list)
-    (list-push 3 list)
-    (println list))
-
   (println (the (list-t int-t) (@list 1 2 3)))
   (println (@list 1 2 3))
   (println '(1 2 3))
@@ -49,8 +43,6 @@
 
   (assert-equal (@set 1 2 3) (list-to-set (@list 1 2 3)))
 
-  (assert-equal (list-copy (@list 1 2 3)) (@list 1 2 3))
-
   (assert-equal (list-get 0 (@list 1 2 3)) 1)
   (assert-equal (list-get 1 (@list 1 2 3)) 2)
   (assert-equal (list-get 2 (@list 1 2 3)) 3)
@@ -71,14 +63,7 @@
     (assert-equal 2 ((list-get 1 fs) 0))
     (assert-equal 3 ((list-get 2 fs) 0))))
 
-(define-test list-pop-test
-  (let ((list (@list 1 2 3)))
-    (assert-equal 3 (list-pop list))
-    (assert-equal 2 (list-pop list))
-    (assert-equal 1 (list-pop list))
-    (assert-equal list (@list))))
-
-(define-test list-put-test
+(define-test list-copy-put-test
   (let ((list (@list 0 0 0))
          (list (list-copy-put 0 1 list))
          (list (list-copy-put 1 2 list))
@@ -91,28 +76,7 @@
     (list-copy-put 0 1 list)
     (list-copy-put 1 2 list)
     (list-copy-put 2 3 list)
-    (assert-equal list (@list 0 0 0)))
+    (assert-equal list (@list 0 0 0))))
 
-  ;; list-put has side effect:
-
-  (let ((list (@list 0 0 0)))
-    (list-put 0 1 list)
-    (list-put 1 2 list)
-    (list-put 2 3 list)
-    (assert-equal list (@list 1 2 3))))
-
-(define-test list-reverse-test
+(define-test list-copy-reverse-test
   (assert-equal (list-copy-reverse (@list 1 2 3)) (@list 3 2 1)))
-
-(define-test list-pop-front-test
-  (let ((list (@list 1 2 3)))
-    (assert-equal 1 (list-pop-front list))
-    (assert-equal 2 (list-pop-front list))
-    (assert-equal 3 (list-pop-front list))
-    (assert-equal list (@list)))
-
-  (let ((list (@list)))
-    (list-push-front 3 list)
-    (list-push-front 2 list)
-    (list-push-front 1 list)
-    (assert-equal list (@list 1 2 3))))

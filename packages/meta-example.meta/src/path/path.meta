@@ -9,8 +9,12 @@
   (path-write "src/path/file-2.txt" "abc\n")
   (assert-equal "abc\n" (path-read "src/path/file-2.txt"))
 
-  (list-each println (list-copy-sort text-compare-lexical (path-list "src")))
-  (print "\n")
+  (let ((a (list-to-array (path-list "src"))))
+    (array-sort text-compare-lexical a)
+    (list-each println (array-to-list a))
+    (print "\n"))
 
-  (list-each println (list-copy-sort text-compare-lexical (path-list-recursive "src")))
-  (print "\n"))
+  (let ((a (list-to-array (path-list-recursive "src"))))
+    (array-sort text-compare-lexical a)
+    (list-each println (array-to-list a))
+    (print "\n")))

@@ -1,26 +1,26 @@
 (module builtin)
 
-(define-opaque-type (box-t E) (list-t E)
+(define-opaque-type (box-t E) (array-t E)
   (make-box (-> (box-t E)))
   (box-is-empty (-> (box-t E) bool-t))
   (box-put (-> E (box-t E) void-t))
   (box-get-maybe (-> (box-t E) (maybe-t E))))
 
 (define (make-box)
-  (make-list))
+  (make-array))
 
 (define (box-is-empty box)
-  (list-is-empty box))
+  (array-is-empty box))
 
 (define (box-put value box)
   (if (box-is-empty box)
-    (list-push value box)
-    (list-put 0 value box)))
+    (array-push value box)
+    (array-put 0 value box)))
 
 (define (box-get-maybe box)
   (if (box-is-empty box)
     (nothing)
-    (just (car box))))
+    (just (array-get 0 box))))
 
 (claim box-get
   (all (E)

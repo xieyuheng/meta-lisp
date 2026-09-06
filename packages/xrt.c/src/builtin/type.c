@@ -1,97 +1,97 @@
 #include "index.h"
 
 value_t x_type_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("type")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("type")), type);
   return type;
 }
 
 value_t x_any_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("any")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("any")), type);
   return type;
 }
 
 value_t x_int_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("atom")), type);
-  x_list_push_mut(x_object(intern_symbol("int")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("atom")), type);
+  x_array_push_mut(x_object(intern_symbol("int")), type);
   return type;
 }
 
 value_t x_float_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("atom")), type);
-  x_list_push_mut(x_object(intern_symbol("float")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("atom")), type);
+  x_array_push_mut(x_object(intern_symbol("float")), type);
   return type;
 }
 value_t x_text_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("atom")), type);
-  x_list_push_mut(x_object(intern_symbol("string")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("atom")), type);
+  x_array_push_mut(x_object(intern_symbol("string")), type);
   return type;
 }
 value_t x_symbol_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("atom")), type);
-  x_list_push_mut(x_object(intern_symbol("symbol")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("atom")), type);
+  x_array_push_mut(x_object(intern_symbol("symbol")), type);
   return type;
 }
 
 value_t x_bool_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("atom")), type);
-  x_list_push_mut(x_object(intern_symbol("bool")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("atom")), type);
+  x_array_push_mut(x_object(intern_symbol("bool")), type);
   return type;
 }
 
 value_t x_void_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("atom")), type);
-  x_list_push_mut(x_object(intern_symbol("void")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("atom")), type);
+  x_array_push_mut(x_object(intern_symbol("void")), type);
   return type;
 }
 
 value_t x_file_t(void) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("atom")), type);
-  x_list_push_mut(x_object(intern_symbol("file")), type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("atom")), type);
+  x_array_push_mut(x_object(intern_symbol("file")), type);
   return type;
 }
 
 value_t x_list_t(value_t E) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("list")), type);
-  x_list_push_mut(E, type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("list")), type);
+  x_array_push_mut(E, type);
   return type;
 }
 
 value_t x_array_t(value_t E) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("array")), type);
-  x_list_push_mut(E, type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("array")), type);
+  x_array_push_mut(E, type);
   return type;
 }
 
 value_t x_set_t(value_t E) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("set")), type);
-  x_list_push_mut(E, type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("set")), type);
+  x_array_push_mut(E, type);
   return type;
 }
 
 value_t x_hash_t(value_t K, value_t V) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("hash")), type);
-  x_list_push_mut(K, type);
-  x_list_push_mut(V, type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("hash")), type);
+  x_array_push_mut(K, type);
+  x_array_push_mut(V, type);
   return type;
 }
 
 value_t x_pair_t(value_t A, value_t B) {
-  value_t type = x_make_list();
-  x_list_push_mut(x_object(intern_symbol("pair")), type);
-  x_list_push_mut(A, type);
-  x_list_push_mut(B, type);
+  value_t type = x_make_array();
+  x_array_push_mut(x_object(intern_symbol("pair")), type);
+  x_array_push_mut(A, type);
+  x_array_push_mut(B, type);
   return type;
 }

@@ -212,30 +212,34 @@
     (array-put i (@text (array-get i lines) ")") lines)))
 
 (define (sort-entries-by-symbol-key entries)
-  (list-copy-sort
-    (lambda (a b)
-      (text-compare-lexical
-        (symbol-to-text (pair-first a))
-        (symbol-to-text (pair-first b))))
-    (hash-entries entries)))
+  (let ((array (list-to-array (hash-entries entries))))
+    (array-sort
+      (lambda (a b)
+        (text-compare-lexical
+          (symbol-to-text (pair-first a))
+          (symbol-to-text (pair-first b))))
+      array)
+    (array-to-list array)))
 
 (define (sort-entries-by-text-key entries)
-  (list-copy-sort
-    (lambda (a b)
-      (text-compare-lexical (pair-first a) (pair-first b)))
-    (hash-entries entries)))
+  (let ((array (list-to-array (hash-entries entries))))
+    (array-sort
+      (lambda (a b)
+        (text-compare-lexical (pair-first a) (pair-first b)))
+      array)
+    (array-to-list array)))
 
 (define (format-name-value entry debug)
   (@text
     (symbol-to-text (pair-first entry)) " "
     (if debug
       (let ((names (pair-second entry)))
-        (text-join " "
-          (list-map symbol-to-text
-            (list-copy-sort
-              (lambda (a b)
-                (text-compare-lexical (symbol-to-text a) (symbol-to-text b)))
-              (set-to-list names)))))
+        (let ((array (list-to-array (set-to-list names))))
+          (array-sort
+            (lambda (a b)
+              (text-compare-lexical (symbol-to-text a) (symbol-to-text b)))
+            array)
+          (text-join " " (list-map symbol-to-text (array-to-list array)))))
       (format (set-size (pair-second entry))))))
 
 (claim format-module-analysis-report

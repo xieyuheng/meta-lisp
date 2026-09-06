@@ -69,14 +69,14 @@
 (define-test router-run-test
   (let ((router (new-router "test" "0.1.0"))
         (router (define-route router "add x y"))
-        (result (make-list)))
+        (result (make-array)))
     (define-handler router "add"
       (lambda (ctx)
-        (list-push (arg-get 0 ctx) result)
-        (list-push (arg-get 1 ctx) result)
+        (array-push (arg-get 0 ctx) result)
+        (array-push (arg-get 1 ctx) result)
         void))
     (router-run router (@list "add" "3" "4"))
-    (assert-equal (@list "3" "4") result)))
+    (assert-equal (@list "3" "4") (array-to-list result))))
 
 (define-test router-run-test-no-command
   (let ((router (new-router "test" "0.1.0"))

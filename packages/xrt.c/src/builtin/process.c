@@ -26,28 +26,28 @@ void setup_current_command_line(array_t *passthrough) {
 
 value_t x_current_command_line(void) {
   if (!command_line) {
-    return x_make_list();
+    return x_null;
   }
-  value_t list = x_make_list();
+  value_t result = x_make_array();
   size_t length = array_length(command_line);
   for (size_t i = 0; i < length; i++) {
     char *str = (char *) array_get(command_line, i);
-    x_list_push_mut(x_object(make_xtext(str)), list);
+    x_array_push_mut(x_object(make_xtext(str)), result);
   }
-  return list;
+  return x_array_to_list(result);
 }
 
 value_t x_current_full_command_line(void) {
   if (!full_command_line) {
-    return x_make_list();
+    return x_null;
   }
-  value_t list = x_make_list();
+  value_t result = x_make_array();
   size_t length = array_length(full_command_line);
   for (size_t i = 0; i < length; i++) {
     char *str = (char *) array_get(full_command_line, i);
-    x_list_push_mut(x_object(make_xtext(str)), list);
+    x_array_push_mut(x_object(make_xtext(str)), result);
   }
-  return list;
+  return x_array_to_list(result);
 }
 
 value_t x_exit(value_t status) {

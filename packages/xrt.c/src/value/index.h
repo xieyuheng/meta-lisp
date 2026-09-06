@@ -15,4 +15,6 @@
 #include "xset.h"
 #include "xlist.h"
 #include "xarray.h"
+#include "cons.h"
+#include "null.h"
 #include "xfile.h"

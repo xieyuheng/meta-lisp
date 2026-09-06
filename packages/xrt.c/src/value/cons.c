@@ -1,0 +1,139 @@
+#include "index.h"
+
+const object_class_t cons_class = {
+  .name = "cons",
+  .equal_fn = (object_equal_fn_t *) cons_equal,
+  .write_fn = (object_write_fn_t *) write_cons,
+  .hash_code_fn = (object_hash_code_fn_t *) cons_hash_code,
+  .compare_fn = (object_compare_fn_t *) cons_compare,
+  .free_fn = (free_fn_t *) cons_free,
+  .make_child_iter_fn = (object_make_child_iter_fn_t *) make_cons_child_iter,
+  .child_iter_next_fn = (object_child_iter_next_fn_t *) cons_child_iter_next,
+  .child_iter_free_fn = (free_fn_t *) cons_child_iter_free,
+};
+
+cons_t *make_cons(value_t car, value_t cdr) {
+  cons_t *self = new(cons_t);
+  self->header.class = &cons_class;
+  self->car = car;
+  self->cdr = cdr;
+  gc_add_object(global_gc, (object_t *) self);
+  return self;
+}
+
+value_t xlist_to_cons(const xlist_t *xlist) {
+  size_t length = array_length(xlist->elements);
+  value_t list = x_null;
+  for (size_t i = length; i > 0; i--) {
+    list = x_object(make_cons(xlist_get(xlist, i - 1), list));
+  }
+  return list;
+}
+
+void cons_free(cons_t *self) {
+  free(self);
+}
+
+bool is_cons(value_t value) {
+  return is_object(value) &&
+    to_object(value)->header.class == &cons_class;
+}
+
+cons_t *to_cons(value_t value) {
+  assert(is_cons(value));
+  return (cons_t *) to_object(value);
+}
+
+bool cons_equal(const cons_t *lhs, const cons_t *rhs) {
+  if (lhs == rhs) return true;
+
+  if (!equal(lhs->car, rhs->car)) return false;
+  if (!equal(lhs->cdr, rhs->cdr)) return false;
+  return true;
+}
+
+void write_cons(buffer_t *buffer, object_circle_ctx_t *ctx, const cons_t *self) {
+  write_template(buffer, "(@list");
+  const cons_t *cell = self;
+  while (true) {
+    write_template(buffer, " ");
+    write_value_in_ctx(buffer, ctx, cell->car);
+    if (is_cons(cell->cdr)) {
+      cell = to_cons(cell->cdr);
+    } else if (is_null(cell->cdr)) {
+      break;
+    } else {
+      who_printf("(write_cons) cdr of a list should be a list\n");
+      exit(1);
+    }
+  }
+  write_template(buffer, ")");
+}
+
+hash_code_t cons_hash_code(const cons_t *self) {
+  hash_code_t code = 6661; // any big prime number would do.
+  const cons_t *cell = self;
+  while (true) {
+    code = (code << 5) - code + value_hash_code(cell->car);
+    if (is_cons(cell->cdr)) {
+      cell = to_cons(cell->cdr);
+    } else {
+      code = (code << 5) - code + value_hash_code(cell->cdr);
+      break;
+    }
+  }
+  return code;
+}
+
+ordering_t cons_compare(const cons_t *lhs, const cons_t *rhs) {
+  if (lhs == rhs) return 0;
+
+  const cons_t *lhs_cell = lhs;
+  const cons_t *rhs_cell = rhs;
+  while (true) {
+    if (is_cons(lhs_cell->cdr) && is_cons(rhs_cell->cdr)) {
+      ordering_t ordering = value_total_compare(lhs_cell->car, rhs_cell->car);
+      if (ordering != 0) return ordering;
+      lhs_cell = to_cons(lhs_cell->cdr);
+      rhs_cell = to_cons(rhs_cell->cdr);
+    } else {
+      return value_total_compare(lhs_cell->cdr, rhs_cell->cdr);
+    }
+  }
+}
+
+struct cons_child_iter_t {
+  const cons_t *cons;
+  uint8_t index;
+};
+
+cons_child_iter_t *make_cons_child_iter(const cons_t *cons) {
+  cons_child_iter_t *self = new(cons_child_iter_t);
+  self->cons = cons;
+  self->index = 0;
+  return self;
+}
+
+void cons_child_iter_free(cons_child_iter_t *self) {
+  free(self);
+}
+
+object_t *cons_child_iter_next(cons_child_iter_t *iter) {
+  while (true) {
+    if (iter->index == 0) {
+      iter->index = 1;
+      if (is_object(iter->cons->car)) {
+        return to_object(iter->cons->car);
+      }
+    }
+
+    if (iter->index == 1) {
+      iter->index = 2;
+      if (is_object(iter->cons->cdr)) {
+        return to_object(iter->cons->cdr);
+      }
+    }
+
+    return NULL;
+  }
+}

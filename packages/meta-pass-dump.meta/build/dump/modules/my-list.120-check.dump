@@ -44,7 +44,7 @@
         " "
         (meta-builtin/builtin/cons
          (meta-builtin/builtin/format list)
-         (meta-builtin/builtin/make-list)))))
+         meta-builtin/builtin/null))))
      (meta-builtin/builtin/make-source-location
       "src/my-list.meta"
       (meta-builtin/builtin/make-source-span
@@ -71,7 +71,7 @@
         " "
         (meta-builtin/builtin/cons
          (meta-builtin/builtin/format list)
-         (meta-builtin/builtin/make-list)))))
+         meta-builtin/builtin/null))))
      (meta-builtin/builtin/make-source-location
       "src/my-list.meta"
       (meta-builtin/builtin/make-source-span
@@ -183,7 +183,7 @@
                   " "
                   (meta-builtin/builtin/cons
                    (meta-builtin/builtin/format list2)
-                   (meta-builtin/builtin/make-list)))))))
+                   meta-builtin/builtin/null))))))
              (meta-builtin/builtin/make-source-location
               "src/my-list.meta"
               (meta-builtin/builtin/make-source-span
@@ -203,7 +203,7 @@
                       " "
                       (meta-builtin/builtin/cons
                        (meta-builtin/builtin/format list2)
-                       (meta-builtin/builtin/make-list)))))))
+                       meta-builtin/builtin/null))))))
                  (meta-builtin/builtin/make-source-location
                   "src/my-list.meta"
                   (meta-builtin/builtin/make-source-span

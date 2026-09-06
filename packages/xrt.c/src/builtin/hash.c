@@ -51,35 +51,35 @@ value_t x_hash_delete(value_t key, value_t hash) {
 }
 
 value_t x_hash_keys(value_t hash) {
-  xlist_t *keys = make_xlist();
+  value_t keys = x_make_array();
 
   hash_iter_t iter;
   hash_iter_init(&iter, to_xhash(hash)->hash);
   const hash_entry_t *entry = hash_iter_next_entry(&iter);
   while (entry) {
-    xlist_push(keys, (value_t) entry->key);
+    x_array_push_mut((value_t) entry->key, keys);
     entry = hash_iter_next_entry(&iter);
   }
 
-  return x_object(keys);
+  return x_array_to_list(keys);
 }
 
 value_t x_hash_values(value_t hash) {
-  xlist_t *keys = make_xlist();
+  value_t values = x_make_array();
 
   hash_iter_t iter;
   hash_iter_init(&iter, to_xhash(hash)->hash);
   const hash_entry_t *entry = hash_iter_next_entry(&iter);
   while (entry) {
-    xlist_push(keys, (value_t) entry->value);
+    x_array_push_mut((value_t) entry->value, values);
     entry = hash_iter_next_entry(&iter);
   }
 
-  return x_object(keys);
+  return x_array_to_list(values);
 }
 
 value_t x_hash_entries(value_t hash) {
-  xlist_t *entries = make_xlist();
+  value_t entries = x_make_array();
 
   hash_iter_t iter;
   hash_iter_init(&iter, to_xhash(hash)->hash);
@@ -87,9 +87,9 @@ value_t x_hash_entries(value_t hash) {
   while (entry) {
     value_t key = (value_t) entry->key;
     value_t value = (value_t) entry->value;
-    xlist_push(entries, x_make_pair(key, value));
+    x_array_push_mut(x_make_pair(key, value), entries);
     entry = hash_iter_next_entry(&iter);
   }
 
-  return x_object(entries);
+  return x_array_to_list(entries);
 }

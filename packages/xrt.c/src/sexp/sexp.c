@@ -9,18 +9,18 @@ value_t parse_sexps(const char *string) {
   list_t *tokens = lexer_lex(lexer);
   lexer_free(lexer);
 
-  value_t sexps = x_make_list();
+  value_t sexps = x_make_array();
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
       break;
     }
 
-    x_list_push_mut(for_sexp(tokens), sexps);
+    x_array_push_mut(for_sexp(tokens), sexps);
   }
 
   list_free(tokens);
-  return sexps;
+  return x_array_to_list(sexps);
 }
 
 // - assume a sexp exists (maybe after line comments)
@@ -58,7 +58,6 @@ static value_t for_sexp(list_t *tokens) {
   }
 
   case QUOTATION_MARK_TOKEN: {
-    value_t sexp = x_make_list();
     value_t head = x_void;
     if (string_equal(token->content, "'")) {
       head = x_object(intern_symbol("@quote"));
@@ -71,8 +70,7 @@ static value_t for_sexp(list_t *tokens) {
       exit(1);
     }
 
-    x_list_push_mut(head, sexp);
-    x_list_push_mut(for_sexp(tokens), sexp);
+    value_t sexp = x_cons(head, x_cons(for_sexp(tokens), x_null));
     token_free(token);
     return sexp;
   }
@@ -108,7 +106,7 @@ static value_t for_sexp(list_t *tokens) {
 }
 
 static value_t for_list(const char *end, list_t *tokens) {
-  value_t sexp = x_make_list();
+  value_t result = x_make_array();
   while (true) {
     ignore_line_comments(tokens);
     if (list_is_empty(tokens)) {
@@ -121,7 +119,7 @@ static value_t for_list(const char *end, list_t *tokens) {
       if (string_equal(token->content, end)) {
         token = list_pop_front(tokens);
         token_free(token);
-        return sexp;
+        return x_array_to_list(result);
       } else {
         who_printf(
           "bracket end mismatch, expecting: %s, meet: %s\n",
@@ -129,7 +127,7 @@ static value_t for_list(const char *end, list_t *tokens) {
         exit(1);
       }
     } else {
-      x_list_push_mut(for_sexp(tokens), sexp);
+      x_array_push_mut(for_sexp(tokens), result);
     }
   }
 }
@@ -148,6 +146,30 @@ void write_as_sexp(buffer_t *buffer, value_t sexp) {
 
   if (is_atom(sexp)) {
     write_atom(buffer, sexp);
+    return;
+  }
+
+  if (is_null(sexp)) {
+    write_string(buffer, "()");
+    return;
+  }
+
+  if (is_cons(sexp)) {
+    write_string(buffer, "(");
+    bool first = true;
+    while (is_cons(sexp)) {
+      if (!first) write_string(buffer, " ");
+      write_as_sexp(buffer, to_cons(sexp)->car);
+      first = false;
+      sexp = to_cons(sexp)->cdr;
+    }
+    if (!is_null(sexp)) {
+      who_printf("[write_as_sexp] cdr of a list should be a list: ");
+      print_value(sexp);
+      printf("\n");
+      exit(1);
+    }
+    write_string(buffer, ")");
     return;
   }
 
