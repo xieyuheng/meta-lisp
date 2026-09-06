@@ -1,3 +1,5 @@
+.SECONDEXPANSION:
+
 cc = gcc
 ld = ld
 
@@ -63,14 +65,14 @@ test:: $(tests) $(snapshots)
 	echo $(tests) | tr [:space:] '\n' | $(parallel) {}
 	if test -n "$(snapshots)"; then echo $(snapshots) | tr [:space:] '\n' | $(parallel) {} ">" {}.out; fi
 
-src/%.exe: src/%.exe.c src/index.o
-	$(cc) $(cflags) $^ $(deps) $(ldflags) -o $@
+src/%.exe: src/%.exe.c src/index.o $$(deps)
+	$(cc) $(cflags) $^ $(ldflags) -o $@
 
-src/%.test: src/%.test.c src/index.o
-	$(cc) $(cflags) $^ $(deps) $(ldflags) -o $@
+src/%.test: src/%.test.c src/index.o $$(deps)
+	$(cc) $(cflags) $^ $(ldflags) -o $@
 
-src/%.snapshot: src/%.snapshot.c src/index.o
-	$(cc) $(cflags) $^ $(deps) $(ldflags) -o $@
+src/%.snapshot: src/%.snapshot.c src/index.o $$(deps)
+	$(cc) $(cflags) $^ $(ldflags) -o $@
 
 src/index.o: $(objects)
 	$(ld) -r $^ -o $@
