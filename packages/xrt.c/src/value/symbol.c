@@ -3,6 +3,7 @@
 struct symbol_t {
   struct object_header_t header;
   char *string;
+  hash_code_t hash_code;
 };
 
 const object_class_t symbol_class = {
@@ -28,6 +29,7 @@ symbol_t *intern_symbol(const char *string) {
   self->header.class = &symbol_class;
   self->header.is_static = true;
   self->string = string_copy(string);
+  self->hash_code = 3 * string_hash_code(string);
   record_insert_or_fail(static_symbol_record, string, self);
   return self;
 }
@@ -74,7 +76,7 @@ void write_symbol(buffer_t *buffer, object_circle_ctx_t *ctx, const symbol_t *se
 }
 
 hash_code_t symbol_hash_code(const symbol_t *self) {
-  return 3 * string_hash_code(self->string);
+  return self->hash_code;
 }
 
 ordering_t symbol_compare(const symbol_t *lhs, const symbol_t *rhs) {
