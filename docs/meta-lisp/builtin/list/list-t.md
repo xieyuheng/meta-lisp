@@ -10,7 +10,7 @@ type-t
 
 # Description
 
-List type constructor. `(list-t E)` represents a list with element type `E`.
+List type constructor. `(list-t E)` represents an immutable list with element type `E`.
 
 # Examples
 

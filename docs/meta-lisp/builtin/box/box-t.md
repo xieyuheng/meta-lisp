@@ -10,12 +10,12 @@ type-t
 
 # Description
 
-Box type constructor. Internally represented as `(list-t E)`.
+Box type constructor. Internally represented as `(array-t E)`.
 
 # Definition
 
 ```meta-lisp
-(define-opaque-type (box-t E) (list-t E)
+(define-opaque-type (box-t E) (array-t E)
   (make-box (-> (box-t E)))
   (box-is-empty (-> (box-t E) bool-t))
   (box-put (-> E (box-t E) (box-t E)))

@@ -158,6 +158,8 @@ Creates a list.
 
 The `@` prefix avoids occupying the variable name `list`.
 
+The empty list `(@list)` evaluates to `null`, printed as `#null`.
+
 ## (@set)
 
 ```meta-lisp
@@ -427,7 +429,8 @@ The function body `<body>` can be multiple expressions:
 
 | Type           | Description                       |
 |----------------|-----------------------------------|
-| `(list-t E)`   | List of elements of type `E`      |
+| `(list-t E)`   | Immutable list of elements of type `E` |
+| `(array-t E)`  | Mutable array of elements of type `E` |
 | `(set-t E)`    | Set of elements of type `E`       |
 | `(hash-t K V)` | Hash table with keys `K` and values `V` |
 
@@ -1148,10 +1151,10 @@ Destructures algebraic data types using pattern matching.
 
 Defines an opaque type, hiding its internal representation.
 
-For example, the builtin `box-t` with internal representation `(list-t E)`:
+For example, the builtin `box-t` with internal representation `(array-t E)`:
 
 ```meta-lisp
-(define-opaque-type (box-t E) (list-t E)
+(define-opaque-type (box-t E) (array-t E)
   (make-box (-> (box-t E)))
   (box-is-empty (-> (box-t E) bool-t))
   (box-put (-> E (box-t E) (box-t E)))
@@ -1161,21 +1164,21 @@ For example, the builtin `box-t` with internal representation `(list-t E)`:
 When implementing interface functions, it is equivalent to declaring:
 
 ```meta-lisp
-(claim make-box (all (E) (-> (list-t E))))
-(claim box-is-empty (all (E) (-> (list-t E) bool-t)))
-(claim box-put (all (E) (-> E (list-t E) (list-t E))))
-(claim box-get-maybe (all (E) (-> (list-t E) (maybe-t E))))
+(claim make-box (all (E) (-> (array-t E))))
+(claim box-is-empty (all (E) (-> (array-t E) bool-t)))
+(claim box-put (all (E) (-> E (array-t E) (array-t E))))
+(claim box-get-maybe (all (E) (-> (array-t E) (maybe-t E))))
 ```
 
 Thus interface functions can use list APIs internally:
 
 ```meta-lisp
-(define (make-box) (make-list))
+(define (make-box) (make-array))
 
 (define (box-put value box)
   (if (box-is-empty box)
-    (list-push value box)
-    (list-put 0 value box)))
+    (array-push value box)
+    (array-put 0 value box)))
 ```
 
 When using interface functions, it is equivalent to declaring:

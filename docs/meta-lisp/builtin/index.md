@@ -13,6 +13,7 @@ All builtin functions in meta-lisp, categorized by functionality.
 - [Text](#text)
 - [Symbol](#symbol)
 - [Void](#void)
+- [Array](#array)
 - [List](#list)
 - [Set](#set)
 - [Hash table](#hash-table)
@@ -210,14 +211,52 @@ Operations on `symbol-t`.
 
 - [`is-void`](void/is-void.md) — Check if a value is void
 
+## Array
+
+Operations on `(array-t E)` — mutable arrays.
+
+### Type and construction
+
+- [`array-t`](array/array-t.md) — Array type constructor
+- [`make-array`](array/make-array.md) — Create an empty array
+- [`is-array`](array/is-array.md) — Check if a value is an array
+- [`(@array ...)`](array/@array.md) — Array literal
+
+### Access
+
+- [`array-get`](array/array-get.md) — Get element by index
+- [`array-length`](array/array-length.md) — Array length
+- [`array-is-empty`](array/array-is-empty.md) — Check if empty
+
+### Mutation
+
+- [`array-put`](array/array-put.md) — Replace at index
+- [`array-push`](array/array-push.md) — Append at end
+- [`array-pop`](array/array-pop.md) — Pop from end
+- [`array-push-front`](array/array-push-front.md) — Prepend at front
+- [`array-pop-front`](array/array-pop-front.md) — Pop from front
+- [`array-reverse`](array/array-reverse.md) — Reverse in-place
+- [`array-sort`](array/array-sort.md) — Sort in-place with comparator
+
+### Copy and conversion
+
+- [`array-copy`](array/array-copy.md) — Copy an array
+- [`array-to-list`](array/array-to-list.md) — Convert to list
+- [`list-to-array`](array/list-to-array.md) — Convert from list
+
+### Iteration
+
+- [`array-each`](array/array-each.md) — Iterate with side effects
+- [`array-each-index`](array/array-each-index.md) — Iterate with index
+
 ## List
 
-Operations on `(list-t E)`.
+Operations on `(list-t E)` — immutable lists.
 
 ### Type and construction
 
 - [`list-t`](list/list-t.md) — List type constructor
-- [`make-list`](list/make-list.md) — Create an empty list
+- [`null`](list/null.md) — The empty list
 - [`is-list`](list/is-list.md) — Check if a value is a list
 - [`cons`](list/cons.md) — Prepend an element
 
@@ -240,18 +279,9 @@ Operations on `(list-t E)`.
 - [`list-is-empty`](list/list-is-empty.md) — Check if empty
 - [`list-member`](list/list-member.md) — Check if contains element
 
-### Mutation
-
-- [`list-copy`](list/list-copy.md) — Copy a list
-- [`list-put`](list/list-put.md) — Replace at index (mutable)
-- [`list-copy-put`](list/list-copy-put.md) — Replace at index (immutable)
-- [`list-push`](list/list-push.md) — Append at end (mutable)
-- [`list-push-front`](list/list-push-front.md) — Prepend at front (mutable)
-- [`list-pop`](list/list-pop.md) — Pop from end (mutable)
-- [`list-pop-front`](list/list-pop-front.md) — Pop from front (mutable)
-
 ### Transformation
 
+- [`list-copy-put`](list/list-copy-put.md) — Replace at index (immutable)
 - [`list-copy-reverse`](list/list-copy-reverse.md) — Reverse
 - [`list-to-set`](list/list-to-set.md) — Convert to set
 
@@ -259,11 +289,6 @@ Operations on `(list-t E)`.
 
 - [`list-range`](list/list-range.md) — Generate integers from 0 to n - 1
 - [`list-enumerate`](list/list-enumerate.md) — Pair elements with indices
-
-### Sort
-
-- [`list-sort`](list/list-sort.md) — Sort in-place with comparator
-- [`list-copy-sort`](list/list-copy-sort.md) — Sort with comparator (immutable)
 
 ### Iteration and mapping
 
