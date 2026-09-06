@@ -23,10 +23,10 @@ value_t x_symbol_append(value_t left, value_t right) {
 
 value_t x_symbol_concat(value_t list) {
   buffer_t *buffer = make_buffer();
-  int64_t length = to_int64(x_list_length(list));
-  for (int64_t i = 0; i < length; i++) {
-    value_t element = x_list_get(x_int(i), list);
+  while (is_cons(list)) {
+    value_t element = to_cons(list)->car;
     write_string(buffer, symbol_string(to_symbol(element)));
+    list = to_cons(list)->cdr;
   }
 
   char *content = buffer_to_string(buffer);

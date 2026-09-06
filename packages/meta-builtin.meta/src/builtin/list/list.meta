@@ -5,29 +5,97 @@
 (declare-primitive-function car 1)
 (declare-primitive-function cdr 1)
 (declare-primitive-function cons 2)
-(declare-primitive-function list-head 1)
-(declare-primitive-function list-rest 1)
-(declare-primitive-function list-but-last 1)
-(declare-primitive-function list-last 1)
-(declare-primitive-function list-length 1)
-(declare-primitive-function list-is-empty 1)
-(declare-primitive-function list-get 2)
-(declare-primitive-function list-copy-put 3)
-(declare-primitive-function list-copy-reverse 1)
-(declare-primitive-function list-to-set 1)
 
 (claim null (all (E) (list-t E)))
 (claim is-list (all (A) (-> A bool-t)))
 (claim car (all (E) (-> (list-t E) E)))
 (claim cdr (all (E) (-> (list-t E) (list-t E))))
 (claim cons (all (E) (-> E (list-t E) (list-t E))))
+
 (claim list-head (all (E) (-> (list-t E) E)))
+(define (list-head list) (car list))
+
 (claim list-rest (all (E) (-> (list-t E) (list-t E))))
-(claim list-but-last (all (E) (-> (list-t E) (list-t E))))
-(claim list-last (all (E) (-> (list-t E) E)))
-(claim list-length (all (E) (-> (list-t E) int-t)))
+(define (list-rest list) (cdr list))
+
 (claim list-is-empty (all (E) (-> (list-t E) bool-t)))
-(claim list-get (all (E) (-> int-t (list-t E) E)))
-(claim list-copy-put (all (E) (-> int-t E (list-t E) (list-t E))))
-(claim list-copy-reverse (all (E) (-> (list-t E) (list-t E))))
-(claim list-to-set (all (E) (-> (list-t E) (set-t E))))
+(define (list-is-empty list) (equal list null))
+
+(claim list-length
+  (all (E)
+    (-> (list-t E) int-t)))
+(define (list-length list)
+  (list-length-aux list 0))
+
+(claim list-length-aux
+  (all (E)
+    (-> (list-t E) int-t
+        int-t)))
+(define (list-length-aux list n)
+  (if (list-is-empty list)
+    n
+    (list-length-aux (cdr list) (iadd 1 n))))
+
+(claim list-get
+  (all (E)
+    (-> int-t (list-t E) E)))
+(define (list-get index list)
+  (if (equal index 0)
+    (car list)
+    (list-get (isub index 1) (cdr list))))
+
+(claim list-last
+  (all (E)
+    (-> (list-t E) E)))
+(define (list-last list)
+  (if (list-is-empty (cdr list))
+    (car list)
+    (list-last (cdr list))))
+
+(claim list-copy-reverse
+  (all (E)
+    (-> (list-t E) (list-t E))))
+(define (list-copy-reverse list)
+  (list-copy-reverse-aux list null))
+
+(claim list-copy-reverse-aux
+  (all (E)
+    (-> (list-t E) (list-t E)
+        (list-t E))))
+(define (list-copy-reverse-aux list acc)
+  (if (list-is-empty list)
+    acc
+    (list-copy-reverse-aux (cdr list) (cons (car list) acc))))
+
+(claim list-but-last
+  (all (E)
+    (-> (list-t E) (list-t E))))
+(define (list-but-last list)
+  (list-copy-reverse (cdr (list-copy-reverse list))))
+
+(claim list-copy-put
+  (all (E)
+    (-> int-t E (list-t E) (list-t E))))
+(define (list-copy-put index value list)
+  (list-copy-put-aux index value list null))
+
+(claim list-copy-put-aux
+  (all (E)
+    (-> int-t E (list-t E) (list-t E)
+        (list-t E))))
+(define (list-copy-put-aux index value list rev)
+  (cond
+    ((list-is-empty list)
+     (error "(list-copy-put) index out of range"))
+    ((equal index 0)
+     (list-append (list-copy-reverse rev) (cons value (cdr list))))
+    (else
+     (list-copy-put-aux (isub index 1) value (cdr list) (cons (car list) rev)))))
+
+(claim list-to-set
+  (all (E)
+    (-> (list-t E) (set-t E))))
+(define (list-to-set list)
+  (let ((set (make-set)))
+    (list-each (lambda (x) (set-add x set)) list)
+    set))

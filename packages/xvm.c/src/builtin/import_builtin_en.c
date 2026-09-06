@@ -158,19 +158,9 @@ void import_builtin_en(program_t *program) {
 
   define_variable(program, "meta-builtin/builtin/null", x_null);
   define_primitive_1(program, "meta-builtin/builtin/is-list", x_is_any_list);
-  define_primitive_1(program, "meta-builtin/builtin/list-length", x_list_length);
-  define_primitive_1(program, "meta-builtin/builtin/list-is-empty", x_list_is_empty);
-  define_primitive_2(program, "meta-builtin/builtin/list-get", x_list_get);
-  define_primitive_3(program, "meta-builtin/builtin/list-copy-put", x_list_put);
   define_primitive_1(program, "meta-builtin/builtin/car", x_car);
   define_primitive_1(program, "meta-builtin/builtin/cdr", x_cdr);
   define_primitive_2(program, "meta-builtin/builtin/cons", x_cons);
-  define_primitive_1(program, "meta-builtin/builtin/list-head", x_list_head);
-  define_primitive_1(program, "meta-builtin/builtin/list-rest", x_list_rest);
-  define_primitive_1(program, "meta-builtin/builtin/list-but-last", x_list_but_last);
-  define_primitive_1(program, "meta-builtin/builtin/list-last", x_list_last);
-  define_primitive_1(program, "meta-builtin/builtin/list-copy-reverse", x_list_reverse);
-  define_primitive_1(program, "meta-builtin/builtin/list-to-set", x_list_to_set);
 
   // array
 

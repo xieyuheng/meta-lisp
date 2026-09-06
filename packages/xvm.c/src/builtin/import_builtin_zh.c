@@ -158,19 +158,9 @@ void import_builtin_zh(program_t *program) {
 
   define_variable(program, "meta-builtin/内置/空列表", x_null);
   define_primitive_1(program, "meta-builtin/内置/为列表", x_is_any_list);
-  define_primitive_1(program, "meta-builtin/内置/列表长度", x_list_length);
-  define_primitive_1(program, "meta-builtin/内置/列表为空", x_list_is_empty);
-  define_primitive_2(program, "meta-builtin/内置/列表取", x_list_get);
-  define_primitive_3(program, "meta-builtin/内置/列表复制存", x_list_put);
   define_primitive_1(program, "meta-builtin/内置/首", x_car);
   define_primitive_1(program, "meta-builtin/内置/余", x_cdr);
   define_primitive_2(program, "meta-builtin/内置/添", x_cons);
-  define_primitive_1(program, "meta-builtin/内置/列表首项", x_list_head);
-  define_primitive_1(program, "meta-builtin/内置/列表去首", x_list_rest);
-  define_primitive_1(program, "meta-builtin/内置/列表去末", x_list_but_last);
-  define_primitive_1(program, "meta-builtin/内置/列表末项", x_list_last);
-  define_primitive_1(program, "meta-builtin/内置/列表复制反转", x_list_reverse);
-  define_primitive_1(program, "meta-builtin/内置/列表转集合", x_list_to_set);
 
   // array
 
