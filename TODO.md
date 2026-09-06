@@ -1,3 +1,6 @@
+# x86
+
+[x86.c] 改为 tlv 格式的 exe
 [x86.c] 给 x86 后端加 gc
 
 # self-hosting
