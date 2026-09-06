@@ -18,7 +18,7 @@ AI agent 应用中文回答用户的问题。
 - [cli.js] — CLI 框架，依赖 [std.js]
 - [ppml.js] — 格式化打印，依赖 [std.js]
 - [sexp.js] — S 表达式解析器，依赖 [std.js]
-- [meta-lisp.js] — **引导编译器**，为 `.meta` package 提供 `./meta-lisp.js` 编译器
+- [meta-lisp.js] — **引导编译器**，为 `.meta` package 提供根目录 `bin/meta-lisp.js` 编译器
 
 **C packages**（共享 `builders/make/c.mk`）：
 

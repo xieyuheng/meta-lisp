@@ -7,9 +7,9 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 
 find "$XVM2_DIR" -name "*.xvm.asm" | sort | while read -r file; do
   echo "=== $(basename "$file") ==="
-  first=$(./meta-lisp.js xvm:format "$file")
+  first=$(./bin/meta-lisp.js xvm:format "$file")
   printf '%s' "$first" > "$TEMP_DIR/round1.xvm"
-  second=$(./meta-lisp.js xvm:format "$TEMP_DIR/round1.xvm")
+  second=$(./bin/meta-lisp.js xvm:format "$TEMP_DIR/round1.xvm")
   if [ "$first" != "$second" ]; then
     echo "FAIL: round-trip mismatch"
     diff <(printf '%s' "$first") <(printf '%s' "$second")
@@ -17,8 +17,8 @@ find "$XVM2_DIR" -name "*.xvm.asm" | sort | while read -r file; do
   fi
 
   exe_file="${file%.xvm.asm}.xvm.exe"
-  ./meta-lisp.js xvm:assemble "$file" "$exe_file"
-  ./meta-lisp.js xvm:disassemble "$exe_file" "$TEMP_DIR/out.xvm"
+  ./bin/meta-lisp.js xvm:assemble "$file" "$exe_file"
+  ./bin/meta-lisp.js xvm:disassemble "$exe_file" "$TEMP_DIR/out.xvm"
   snapshot="${file%.xvm.asm}.xvm.exe.disasm"
   if [ ! -f "$snapshot" ]; then
     echo "FAIL: missing disasm snapshot $snapshot"
@@ -26,7 +26,7 @@ find "$XVM2_DIR" -name "*.xvm.asm" | sort | while read -r file; do
   fi
   diff -u "$snapshot" "$TEMP_DIR/out.xvm"
 
-  ./meta-lisp.js xvm:info "$exe_file" > "$TEMP_DIR/out.info"
+  ./bin/meta-lisp.js xvm:info "$exe_file" > "$TEMP_DIR/out.info"
   info_snapshot="${file%.xvm.asm}.xvm.exe.info"
   if [ ! -f "$info_snapshot" ]; then
     echo "FAIL: missing info snapshot $info_snapshot"

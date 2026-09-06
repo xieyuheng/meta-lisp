@@ -4,4 +4,4 @@ set -e
 
 rm -rf snapshot
 
-./meta-lisp.js xvm:test
+./bin/meta-lisp.js xvm:test

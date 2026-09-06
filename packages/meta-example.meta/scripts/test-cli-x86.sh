@@ -2,7 +2,7 @@
 
 set -e
 
-x86=../x86.c/src/x86.exe
+x86=./bin/x86
 x86_exe=build/main.x86.exe
 
 echo "=== hello ==="

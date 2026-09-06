@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+root="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+exec "$root/packages/xvm.c/src/xvm.exe" run "$root/packages/meta-lisp.meta/build/bundle.xvm.exe" -- "$@"

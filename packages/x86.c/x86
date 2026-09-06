@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-../x86.c/src/x86.exe $@

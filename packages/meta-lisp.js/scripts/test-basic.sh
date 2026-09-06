@@ -7,9 +7,9 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 
 find "$BASIC_DIR" -name "*.basic" | sort | while read -r file; do
   echo "=== $(basename "$file") ==="
-  first=$(./meta-lisp.js basic:format "$file")
+  first=$(./bin/meta-lisp.js basic:format "$file")
   printf '%s' "$first" > "$TEMP_DIR/round1.basic"
-  second=$(./meta-lisp.js basic:format "$TEMP_DIR/round1.basic")
+  second=$(./bin/meta-lisp.js basic:format "$TEMP_DIR/round1.basic")
   if [ "$first" != "$second" ]; then
     echo "FAIL: round-trip mismatch"
     diff <(printf '%s' "$first") <(printf '%s' "$second")
