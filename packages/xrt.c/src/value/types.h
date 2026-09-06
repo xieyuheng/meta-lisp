@@ -31,8 +31,6 @@ typedef value_t (x_fn_6_t)(value_t x1, value_t x2, value_t x3, value_t x4, value
 typedef struct definition_t definition_t;
 typedef struct symbol_t symbol_t;
 typedef struct xtext_t xtext_t;
-typedef struct xlist_t xlist_t;
-typedef struct xlist_child_iter_t xlist_child_iter_t;
 typedef struct xarray_t xarray_t;
 typedef struct xarray_child_iter_t xarray_child_iter_t;
 typedef struct cons_t cons_t;

@@ -132,12 +132,6 @@ static value_t for_list(const char *end, list_t *tokens) {
   }
 }
 
-bool sexp_has_tag(value_t sexp, const char *tag) {
-  return is_xlist(sexp)
-    && is_false(x_list_is_empty(sexp))
-    && equal(x_car(sexp), x_object(intern_symbol(tag)));
-}
-
 void write_as_sexp(buffer_t *buffer, value_t sexp) {
   if (is_symbol(sexp)) {
     write_string(buffer, symbol_string(to_symbol(sexp)));
@@ -172,20 +166,6 @@ void write_as_sexp(buffer_t *buffer, value_t sexp) {
     write_string(buffer, ")");
     return;
   }
-
-  if (is_xlist(sexp)) {
-    xlist_t *xlist = to_xlist(sexp);
-    size_t length = array_length(xlist->elements);
-    write_string(buffer, "(");
-    for (size_t i = 0; i < length; i++) {
-      if (i > 0) write_string(buffer, " ");
-      write_as_sexp(buffer, xlist_get(xlist, i));
-    }
-
-    write_string(buffer, ")");
-    return;
-  }
-
 
   if (is_xset(sexp)) {
     xset_t *xset = to_xset(sexp);

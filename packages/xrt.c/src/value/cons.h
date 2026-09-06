@@ -11,8 +11,6 @@ struct cons_t {
 cons_t *make_cons(value_t car, value_t cdr);
 void cons_free(cons_t *self);
 
-value_t xlist_to_cons(const xlist_t *xlist);
-
 bool is_cons(value_t value);
 cons_t *to_cons(value_t value);
 

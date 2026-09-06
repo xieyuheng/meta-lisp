@@ -21,15 +21,6 @@ cons_t *make_cons(value_t car, value_t cdr) {
   return self;
 }
 
-value_t xlist_to_cons(const xlist_t *xlist) {
-  size_t length = array_length(xlist->elements);
-  value_t list = x_null;
-  for (size_t i = length; i > 0; i--) {
-    list = x_object(make_cons(xlist_get(xlist, i - 1), list));
-  }
-  return list;
-}
-
 void cons_free(cons_t *self) {
   free(self);
 }

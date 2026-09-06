@@ -13,7 +13,6 @@
 #include "xtext.h"
 #include "xhash.h"
 #include "xset.h"
-#include "xlist.h"
 #include "xarray.h"
 #include "cons.h"
 #include "null.h"
