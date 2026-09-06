@@ -10,11 +10,11 @@ import Path from "node:path"
 import { fileURLToPath } from "node:url"
 import * as B2 from "./basic/index.ts"
 import * as X86Backend from "./compiler/x86-backend/index.ts"
-import * as Xvm2Backend from "./compiler/xvm-backend/index.ts"
+import * as XvmBackend from "./compiler/xvm-backend/index.ts"
 import * as M from "./meta/index.ts"
 import * as Tlv from "./tlv/index.ts"
 import * as X86 from "./x86/index.ts"
-import * as Xvm2 from "./xvm/index.ts"
+import * as Xvm from "./xvm/index.ts"
 
 const { version } = getPackageJson(fileURLToPath(import.meta.url))
 
@@ -50,7 +50,7 @@ router.defineHandlers({
     if ("--dump" in options) pkg.config.compiler.dump = "true"
     M.validateCompilerOptions(pkg.config.compiler)
     M.CorePipeline(pkg)
-    Xvm2Backend.BuildPipeline(pkg)
+    XvmBackend.BuildPipeline(pkg)
     X86Backend.BuildPipeline(pkg)
   },
 
@@ -59,7 +59,7 @@ router.defineHandlers({
       options["--config"] || Path.join(process.cwd(), "meta-package.json")
     const pkg = M.loadPackage("self", configPath)
     M.validateCompilerOptions(pkg.config.compiler)
-    Xvm2Backend.TestPipeline(pkg)
+    XvmBackend.TestPipeline(pkg)
   },
 
   "format-basic": ({ args: [input] }) => {
@@ -80,23 +80,23 @@ router.defineHandlers({
     }
     const code = fs.readFileSync(input, "utf-8")
     const sexps = S.parseSexps(code, { path: input })
-    const program = Xvm2.parseProgram(sexps)
+    const program = Xvm.parseProgram(sexps)
     const text =
-      Ppml.formatNode(Xvm2.prettyProgram(program), { width: 80 }) + "\n"
+      Ppml.formatNode(Xvm.prettyProgram(program), { width: 80 }) + "\n"
     process.stdout.write(text)
   },
 
   "info-xvm": ({ args: [input] }) => {
     const bytes = new Uint8Array(fs.readFileSync(input))
-    process.stdout.write(Xvm2.formatTlvInfo(bytes))
+    process.stdout.write(Xvm.formatTlvInfo(bytes))
   },
 
   "assemble-xvm": ({ args: [input, output] }) => {
     const code = fs.readFileSync(input, "utf-8")
     const sexps = S.parseSexps(code, { path: input })
-    const program = Xvm2.parseProgram(sexps)
-    const exe = Xvm2.assembleProgram(program)
-    const tlv = Xvm2.encodeExe(exe)
+    const program = Xvm.parseProgram(sexps)
+    const exe = Xvm.assembleProgram(program)
+    const tlv = Xvm.encodeExe(exe)
     const buf = Tlv.encodeTlv(tlv)
     fs.writeFileSync(output, buf)
   },
@@ -104,9 +104,9 @@ router.defineHandlers({
   "disassemble-xvm": ({ args: [input, output] }) => {
     const bytes = new Uint8Array(fs.readFileSync(input))
     const tlv = Tlv.decodeTlv(bytes)
-    const exe = Xvm2.decodeExe(tlv)
-    const program = Xvm2.disassembleExe(exe)
-    const text = Xvm2.formatProgram(program)
+    const exe = Xvm.decodeExe(tlv)
+    const program = Xvm.disassembleExe(exe)
+    const text = Xvm.formatProgram(program)
     fs.writeFileSync(output, text)
   },
 

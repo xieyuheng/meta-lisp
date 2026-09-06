@@ -1,8 +1,8 @@
 import * as Ppml from "@xieyuheng/ppml.js"
-import * as Xvm2 from "../index.ts"
+import * as Xvm from "../index.ts"
 import { prettyDefinition } from "./prettyDefinition.ts"
 
-export function prettyProgram(program: Xvm2.Program): Ppml.Node {
+export function prettyProgram(program: Xvm.Program): Ppml.Node {
   const children: Array<Ppml.Node> = []
 
   for (const definition of program.definitions.values()) {

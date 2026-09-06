@@ -1,8 +1,8 @@
 import * as B from "../../../basic/index.ts"
-import * as Xvm2 from "../../../xvm/index.ts"
+import * as Xvm from "../../../xvm/index.ts"
 
-export function SelectInstructionPass(program: B.Program): Xvm2.Program {
-  const xvmProgram = Xvm2.createProgram()
+export function SelectInstructionPass(program: B.Program): Xvm.Program {
+  const xvmProgram = Xvm.createProgram()
 
   for (const [name, definition] of program.definitions) {
     switch (definition.kind) {
@@ -10,20 +10,20 @@ export function SelectInstructionPass(program: B.Program): Xvm2.Program {
         const instrs = codegenFunction(program, definition)
         xvmProgram.definitions.set(
           name,
-          Xvm2.FunctionDefinition(name, definition.parameters, instrs),
+          Xvm.FunctionDefinition(name, definition.parameters, instrs),
         )
         break
       }
 
       case "VariableDefinition": {
-        xvmProgram.definitions.set(name, Xvm2.VariableDeclaration(name))
+        xvmProgram.definitions.set(name, Xvm.VariableDeclaration(name))
         break
       }
 
       case "ExternFunctionDefinition": {
         xvmProgram.definitions.set(
           name,
-          Xvm2.PrimitiveFunctionDeclaration(name),
+          Xvm.PrimitiveFunctionDeclaration(name),
         )
         break
       }
@@ -31,7 +31,7 @@ export function SelectInstructionPass(program: B.Program): Xvm2.Program {
       case "ExternVariableDefinition": {
         xvmProgram.definitions.set(
           name,
-          Xvm2.PrimitiveVariableDeclaration(name),
+          Xvm.PrimitiveVariableDeclaration(name),
         )
         break
       }
@@ -44,11 +44,11 @@ export function SelectInstructionPass(program: B.Program): Xvm2.Program {
 function codegenFunction(
   program: B.Program,
   definition: B.FunctionDefinition,
-): Array<Xvm2.Instr> {
-  const instrs: Array<Xvm2.Instr> = []
+): Array<Xvm.Instr> {
+  const instrs: Array<Xvm.Instr> = []
 
   for (const block of definition.blocks.values()) {
-    instrs.push(Xvm2.Instr("label", [Xvm2.VarOperand(block.label)]))
+    instrs.push(Xvm.Instr("label", [Xvm.VarOperand(block.label)]))
 
     for (const instr of block.instrs) {
       for (const generated of codegenInstr(program, instr)) {
@@ -65,47 +65,47 @@ function isPrimitiveFunction(program: B.Program, name: string): boolean {
   return definition?.kind === "ExternFunctionDefinition"
 }
 
-function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm2.Instr> {
+function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm.Instr> {
   switch (instr.op) {
     case "argument": {
       return []
     }
 
     case "int": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
       const value = B.expectInt(instr.attributes, "content")
-      return [Xvm2.Instr("load-int", [dest, Xvm2.IntOperand(value)])]
+      return [Xvm.Instr("load-int", [dest, Xvm.IntOperand(value)])]
     }
 
     case "float": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
       const value = B.expectFloat(instr.attributes, "content")
-      return [Xvm2.Instr("load-float", [dest, Xvm2.FloatOperand(value)])]
+      return [Xvm.Instr("load-float", [dest, Xvm.FloatOperand(value)])]
     }
 
     case "symbol": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
       const content = B.expectSymbol(instr.attributes, "content")
-      return [Xvm2.Instr("load-symbol", [dest, Xvm2.SymbolOperand(content)])]
+      return [Xvm.Instr("load-symbol", [dest, Xvm.SymbolOperand(content)])]
     }
 
     case "text": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
       const content = B.expectString(instr.attributes, "content")
-      return [Xvm2.Instr("load-string", [dest, Xvm2.StringOperand(content)])]
+      return [Xvm.Instr("load-string", [dest, Xvm.StringOperand(content)])]
     }
 
     case "copy": {
-      const src = Xvm2.VarOperand(instr.input[0].id)
-      const dest = Xvm2.VarOperand(instr.output[0].id)
-      return [Xvm2.Instr("move", [dest, src])]
+      const src = Xvm.VarOperand(instr.input[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
+      return [Xvm.Instr("move", [dest, src])]
     }
 
     case "provide": {
-      const src = Xvm2.VarOperand(instr.input[0].id)
+      const src = Xvm.VarOperand(instr.input[0].id)
       const useSite = B.expectSymbol(instr.attributes, "use-site")
-      const dest = Xvm2.VarOperand(useSite)
-      return [Xvm2.Instr("move", [dest, src])]
+      const dest = Xvm.VarOperand(useSite)
+      return [Xvm.Instr("move", [dest, src])]
     }
 
     case "use": {
@@ -113,77 +113,77 @@ function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm2.Instr> {
     }
 
     case "load-closure": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
       const name = B.expectSymbol(instr.attributes, "name")
-      return [Xvm2.Instr("load-closure", [dest, Xvm2.FnOperand(name)])]
+      return [Xvm.Instr("load-closure", [dest, Xvm.FnOperand(name)])]
     }
 
     case "make-closure": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
       const name = B.expectSymbol(instr.attributes, "name")
       const size = B.expectInt(instr.attributes, "size")
       return [
-        Xvm2.Instr("make-closure", [
+        Xvm.Instr("make-closure", [
           dest,
-          Xvm2.FnOperand(name),
-          Xvm2.U16Operand(Number(size)),
+          Xvm.FnOperand(name),
+          Xvm.U16Operand(Number(size)),
         ]),
       ]
     }
 
     case "store-closure-arg": {
-      const closure = Xvm2.VarOperand(instr.input[0].id)
-      const value = Xvm2.VarOperand(instr.input[1].id)
+      const closure = Xvm.VarOperand(instr.input[0].id)
+      const value = Xvm.VarOperand(instr.input[1].id)
       const index = B.expectInt(instr.attributes, "index")
       return [
-        Xvm2.Instr("store-closure-arg", [
+        Xvm.Instr("store-closure-arg", [
           closure,
-          Xvm2.U16Operand(Number(index)),
+          Xvm.U16Operand(Number(index)),
           value,
         ]),
       ]
     }
 
     case "global-load": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
+      const dest = Xvm.VarOperand(instr.output[0].id)
       const name = B.expectSymbol(instr.attributes, "name")
-      return [Xvm2.Instr("load-global", [dest, Xvm2.GlobalOperand(name)])]
+      return [Xvm.Instr("load-global", [dest, Xvm.GlobalOperand(name)])]
     }
 
     case "global-store": {
-      const src = Xvm2.VarOperand(instr.input[0].id)
+      const src = Xvm.VarOperand(instr.input[0].id)
       const name = B.expectSymbol(instr.attributes, "name")
-      return [Xvm2.Instr("store-global", [Xvm2.GlobalOperand(name), src])]
+      return [Xvm.Instr("store-global", [Xvm.GlobalOperand(name), src])]
     }
 
     case "call": {
       const name = B.expectSymbol(instr.attributes, "name")
-      const args = instr.input.map((cell) => Xvm2.VarOperand(cell.id))
+      const args = instr.input.map((cell) => Xvm.VarOperand(cell.id))
       const isPrim = isPrimitiveFunction(program, name)
       const op = isPrim ? `call-prim-${args.length}` : `call-${args.length}`
-      const result: Array<Xvm2.Instr> = [
-        Xvm2.Instr(op, [
-          isPrim ? Xvm2.PrimOperand(name) : Xvm2.FnOperand(name),
+      const result: Array<Xvm.Instr> = [
+        Xvm.Instr(op, [
+          isPrim ? Xvm.PrimOperand(name) : Xvm.FnOperand(name),
           ...args,
         ]),
       ]
       if (instr.output.length > 0) {
-        const dest = Xvm2.VarOperand(instr.output[0].id)
-        result.push(Xvm2.Instr("load-result", [dest]))
+        const dest = Xvm.VarOperand(instr.output[0].id)
+        result.push(Xvm.Instr("load-result", [dest]))
       }
       return result
     }
 
     case "tail-call": {
       const name = B.expectSymbol(instr.attributes, "name")
-      const args = instr.input.map((cell) => Xvm2.VarOperand(cell.id))
+      const args = instr.input.map((cell) => Xvm.VarOperand(cell.id))
       const isPrim = isPrimitiveFunction(program, name)
       const op = isPrim
         ? `tail-call-prim-${args.length}`
         : `tail-call-${args.length}`
       return [
-        Xvm2.Instr(op, [
-          isPrim ? Xvm2.PrimOperand(name) : Xvm2.FnOperand(name),
+        Xvm.Instr(op, [
+          isPrim ? Xvm.PrimOperand(name) : Xvm.FnOperand(name),
           ...args,
         ]),
       ]
@@ -191,49 +191,49 @@ function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm2.Instr> {
 
     case "apply": {
       const [target, ...argCells] = instr.input
-      const targetVar = Xvm2.VarOperand(target.id)
-      const args = argCells.map((cell) => Xvm2.VarOperand(cell.id))
-      const result: Array<Xvm2.Instr> = [
-        Xvm2.Instr(`apply-${args.length}`, [targetVar, ...args]),
+      const targetVar = Xvm.VarOperand(target.id)
+      const args = argCells.map((cell) => Xvm.VarOperand(cell.id))
+      const result: Array<Xvm.Instr> = [
+        Xvm.Instr(`apply-${args.length}`, [targetVar, ...args]),
       ]
       if (instr.output.length > 0) {
-        const dest = Xvm2.VarOperand(instr.output[0].id)
-        result.push(Xvm2.Instr("load-result", [dest]))
+        const dest = Xvm.VarOperand(instr.output[0].id)
+        result.push(Xvm.Instr("load-result", [dest]))
       }
       return result
     }
 
     case "tail-apply": {
       const [target, ...argCells] = instr.input
-      const targetVar = Xvm2.VarOperand(target.id)
-      const args = argCells.map((cell) => Xvm2.VarOperand(cell.id))
-      return [Xvm2.Instr(`tail-apply-${args.length}`, [targetVar, ...args])]
+      const targetVar = Xvm.VarOperand(target.id)
+      const args = argCells.map((cell) => Xvm.VarOperand(cell.id))
+      return [Xvm.Instr(`tail-apply-${args.length}`, [targetVar, ...args])]
     }
 
     case "branch": {
-      const cond = Xvm2.VarOperand(instr.input[0].id)
+      const cond = Xvm.VarOperand(instr.input[0].id)
       const thenLabel = B.expectSymbol(instr.attributes, "then-label")
       const elseLabel = B.expectSymbol(instr.attributes, "else-label")
       return [
-        Xvm2.Instr("branch", [
+        Xvm.Instr("branch", [
           cond,
-          Xvm2.LabelOperand(thenLabel),
-          Xvm2.LabelOperand(elseLabel),
+          Xvm.LabelOperand(thenLabel),
+          Xvm.LabelOperand(elseLabel),
         ]),
       ]
     }
 
     case "goto": {
       const label = B.expectSymbol(instr.attributes, "label")
-      return [Xvm2.Instr("goto", [Xvm2.LabelOperand(label)])]
+      return [Xvm.Instr("goto", [Xvm.LabelOperand(label)])]
     }
 
     case "return": {
       if (instr.input.length === 0) {
-        return [Xvm2.Instr("return-void", [])]
+        return [Xvm.Instr("return-void", [])]
       }
-      const src = Xvm2.VarOperand(instr.input[0].id)
-      return [Xvm2.Instr("return", [src])]
+      const src = Xvm.VarOperand(instr.input[0].id)
+      return [Xvm.Instr("return", [src])]
     }
 
     case "iadd":
@@ -245,19 +245,19 @@ function codegenInstr(program: B.Program, instr: B.Instr): Array<Xvm2.Instr> {
     case "int-less":
     case "int-greater-or-equal":
     case "int-less-or-equal": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
-      const a = Xvm2.VarOperand(instr.input[0].id)
-      const b = Xvm2.VarOperand(instr.input[1].id)
-      return [Xvm2.Instr(instr.op, [dest, a, b])]
+      const dest = Xvm.VarOperand(instr.output[0].id)
+      const a = Xvm.VarOperand(instr.input[0].id)
+      const b = Xvm.VarOperand(instr.input[1].id)
+      return [Xvm.Instr(instr.op, [dest, a, b])]
     }
 
     case "ineg":
     case "int-is-positive":
     case "int-is-non-negative":
     case "int-is-non-zero": {
-      const dest = Xvm2.VarOperand(instr.output[0].id)
-      const src = Xvm2.VarOperand(instr.input[0].id)
-      return [Xvm2.Instr(instr.op, [dest, src])]
+      const dest = Xvm.VarOperand(instr.output[0].id)
+      const src = Xvm.VarOperand(instr.input[0].id)
+      return [Xvm.Instr(instr.op, [dest, src])]
     }
 
     default: {

@@ -1,4 +1,4 @@
-import * as Xvm2 from "../../../xvm/index.ts"
+import * as Xvm from "../../../xvm/index.ts"
 
 // 注入入口包装函数，使每个可执行程序保持单一编译期入口：
 //
@@ -10,18 +10,18 @@ import * as Xvm2 from "../../../xvm/index.ts"
 //           （仅当给定 build.entry  时）
 
 export function InjectMainAndTestPass(
-  program: Xvm2.Program,
+  program: Xvm.Program,
   entryName: string | undefined,
 ): void {
   program.definitions.set(
     "test",
-    Xvm2.FunctionDefinition(
+    Xvm.FunctionDefinition(
       "test",
       [],
       [
-        Xvm2.Instr("call-0", [Xvm2.FnOperand("setup-variables")]),
-        Xvm2.Instr("call-0", [Xvm2.FnOperand("run-tests")]),
-        Xvm2.Instr("return-void", []),
+        Xvm.Instr("call-0", [Xvm.FnOperand("setup-variables")]),
+        Xvm.Instr("call-0", [Xvm.FnOperand("run-tests")]),
+        Xvm.Instr("return-void", []),
       ],
     ),
   )
@@ -34,13 +34,13 @@ export function InjectMainAndTestPass(
 
     program.definitions.set(
       "main",
-      Xvm2.FunctionDefinition(
+      Xvm.FunctionDefinition(
         "main",
         [],
         [
-          Xvm2.Instr("call-0", [Xvm2.FnOperand("setup-variables")]),
-          Xvm2.Instr("call-0", [Xvm2.FnOperand(entryName)]),
-          Xvm2.Instr("return-void", []),
+          Xvm.Instr("call-0", [Xvm.FnOperand("setup-variables")]),
+          Xvm.Instr("call-0", [Xvm.FnOperand(entryName)]),
+          Xvm.Instr("return-void", []),
         ],
       ),
     )

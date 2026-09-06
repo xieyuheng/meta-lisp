@@ -1,21 +1,21 @@
 import * as S from "@xieyuheng/sexp.js"
-import * as Xvm2 from "../index.ts"
+import * as Xvm from "../index.ts"
 
-export function parseOperand(sexp: S.Sexp): Xvm2.Operand {
+export function parseOperand(sexp: S.Sexp): Xvm.Operand {
   if (S.isSymbolSexp(sexp)) {
-    return Xvm2.VarOperand(sexp.content)
+    return Xvm.VarOperand(sexp.content)
   }
 
   if (S.isIntSexp(sexp)) {
-    return Xvm2.IntOperand(sexp.content)
+    return Xvm.IntOperand(sexp.content)
   }
 
   if (S.isFloatSexp(sexp)) {
-    return Xvm2.FloatOperand(sexp.content)
+    return Xvm.FloatOperand(sexp.content)
   }
 
   if (S.isStringSexp(sexp)) {
-    return Xvm2.StringOperand(sexp.content)
+    return Xvm.StringOperand(sexp.content)
   }
 
   if (S.isListSexp(sexp)) {
@@ -32,7 +32,7 @@ export function parseOperand(sexp: S.Sexp): Xvm2.Operand {
     if (head === "@quote" && elements.length === 2) {
       const quoted = elements[1]
       if (S.isSymbolSexp(quoted)) {
-        return Xvm2.SymbolOperand(quoted.content)
+        return Xvm.SymbolOperand(quoted.content)
       }
       throw new S.ErrorWithSourceLocation(
         `[parseOperand] expected symbol after quote, got: ${S.formatSexp(sexp)}`,
@@ -41,23 +41,23 @@ export function parseOperand(sexp: S.Sexp): Xvm2.Operand {
     }
 
     if (head === "u16" && elements.length === 2 && S.isIntSexp(elements[1])) {
-      return Xvm2.U16Operand(Number(elements[1].content))
+      return Xvm.U16Operand(Number(elements[1].content))
     }
 
     if (head === "fn" && elements.length === 2) {
-      return Xvm2.FnOperand(S.asSymbolSexp(elements[1]).content)
+      return Xvm.FnOperand(S.asSymbolSexp(elements[1]).content)
     }
 
     if (head === "prim" && elements.length === 2) {
-      return Xvm2.PrimOperand(S.asSymbolSexp(elements[1]).content)
+      return Xvm.PrimOperand(S.asSymbolSexp(elements[1]).content)
     }
 
     if (head === "global" && elements.length === 2) {
-      return Xvm2.GlobalOperand(S.asSymbolSexp(elements[1]).content)
+      return Xvm.GlobalOperand(S.asSymbolSexp(elements[1]).content)
     }
 
     if (head === "label" && elements.length === 2) {
-      return Xvm2.LabelOperand(S.asSymbolSexp(elements[1]).content)
+      return Xvm.LabelOperand(S.asSymbolSexp(elements[1]).content)
     }
   }
 
