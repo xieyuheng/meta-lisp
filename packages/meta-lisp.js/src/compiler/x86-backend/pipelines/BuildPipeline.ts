@@ -69,7 +69,7 @@ function X86Bundle(pkg: M.Package, x86Program: X86.Program): void {
   callWithFile(openOutputFile(`${directory}/bundle.x86.asm`), (file) => {
     // PrimitiveTypeDefinition is internal — createProgram() registers the
     // builtin types itself, so the bundle stays re-assemblable by
-    // `assemble-x86` (whose parser only knows user-language stmts).
+    // `x86:assemble` (whose parser only knows user-language stmts).
     const definitions = Array.from(x86Program.definitions.values()).filter(
       (definition) => definition.kind !== "PrimitiveTypeDefinition",
     )

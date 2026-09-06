@@ -23,13 +23,13 @@ const router = cli.createRouter("meta-lisp.js", version)
 router.defineRoutes([
   "check --config --dump",
   "build --config --dump",
-  "test-xvm --config",
-  "format-basic <input>",
-  "format-xvm <input>",
-  "info-xvm <input>",
-  "assemble-xvm <input> <output>",
-  "disassemble-xvm <input> <output>",
-  "assemble-x86 <input> <output>",
+  "basic:format <input>",
+  "xvm:test --config",
+  "xvm:format <input>",
+  "xvm:info <input>",
+  "xvm:assemble <input> <output>",
+  "xvm:disassemble <input> <output>",
+  "x86:assemble <input> <output>",
 ])
 
 router.defineHandlers({
@@ -54,7 +54,7 @@ router.defineHandlers({
     X86Backend.BuildPipeline(pkg)
   },
 
-  "test-xvm": ({ options }) => {
+  "xvm:test": ({ options }) => {
     const configPath =
       options["--config"] || Path.join(process.cwd(), "meta-package.json")
     const pkg = M.loadPackage("self", configPath)
@@ -62,7 +62,7 @@ router.defineHandlers({
     XvmBackend.TestPipeline(pkg)
   },
 
-  "format-basic": ({ args: [input] }) => {
+  "basic:format": ({ args: [input] }) => {
     if (input === "-") {
       input = "/dev/stdin"
     }
@@ -74,7 +74,7 @@ router.defineHandlers({
     process.stdout.write(text)
   },
 
-  "format-xvm": ({ args: [input] }) => {
+  "xvm:format": ({ args: [input] }) => {
     if (input === "-") {
       input = "/dev/stdin"
     }
@@ -86,12 +86,12 @@ router.defineHandlers({
     process.stdout.write(text)
   },
 
-  "info-xvm": ({ args: [input] }) => {
+  "xvm:info": ({ args: [input] }) => {
     const bytes = new Uint8Array(fs.readFileSync(input))
     process.stdout.write(Xvm.formatTlvInfo(bytes))
   },
 
-  "assemble-xvm": ({ args: [input, output] }) => {
+  "xvm:assemble": ({ args: [input, output] }) => {
     const code = fs.readFileSync(input, "utf-8")
     const sexps = S.parseSexps(code, { path: input })
     const program = Xvm.parseProgram(sexps)
@@ -101,7 +101,7 @@ router.defineHandlers({
     fs.writeFileSync(output, buf)
   },
 
-  "disassemble-xvm": ({ args: [input, output] }) => {
+  "xvm:disassemble": ({ args: [input, output] }) => {
     const bytes = new Uint8Array(fs.readFileSync(input))
     const tlv = Tlv.decodeTlv(bytes)
     const exe = Xvm.decodeExe(tlv)
@@ -110,7 +110,7 @@ router.defineHandlers({
     fs.writeFileSync(output, text)
   },
 
-  "assemble-x86": ({ args: [input, output] }) => {
+  "x86:assemble": ({ args: [input, output] }) => {
     const code = fs.readFileSync(input, "utf-8")
     const sexps = S.parseSexps(code, { path: input })
     const stmts = sexps.map((s) => X86.parseStmt(s))
