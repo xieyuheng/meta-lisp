@@ -56,9 +56,16 @@ cons_t *to_cons(value_t value) {
 bool cons_equal(const cons_t *lhs, const cons_t *rhs) {
   if (lhs == rhs) return true;
 
-  if (!equal(lhs->car, rhs->car)) return false;
-  if (!equal(lhs->cdr, rhs->cdr)) return false;
-  return true;
+  while (true) {
+    if (!equal(lhs->car, rhs->car)) return false;
+
+    if (is_cons(lhs->cdr) && is_cons(rhs->cdr)) {
+      lhs = to_cons(lhs->cdr);
+      rhs = to_cons(rhs->cdr);
+    } else {
+      return equal(lhs->cdr, rhs->cdr);
+    }
+  }
 }
 
 void write_cons(buffer_t *buffer, object_circle_ctx_t *ctx, const cons_t *self) {
