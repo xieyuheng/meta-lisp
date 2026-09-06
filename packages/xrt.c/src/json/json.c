@@ -61,31 +61,6 @@ void json_object_put(value_t object, const char *key, value_t value) {
 
 // ── JSON parser ──
 
-// convert the internal array builders of array-json to cons lists
-
-static void convert_json_lists(value_t json) {
-  value_t tag = xarray_get(to_xarray(json), 0);
-  if (equal(tag, x_object(intern_symbol("array-json")))) {
-    value_t elements = xarray_get(to_xarray(json), 1);
-    value_t list = x_array_to_list(elements);
-    xarray_put(to_xarray(json), 1, list);
-    while (is_cons(list)) {
-      convert_json_lists(to_cons(list)->car);
-      list = to_cons(list)->cdr;
-    }
-  } else if (equal(tag, x_object(intern_symbol("object-json")))) {
-    value_t entries = xarray_get(to_xarray(json), 1);
-    xhash_t *hash = to_xhash(entries);
-    hash_iter_t iter;
-    hash_iter_init(&iter, hash->hash);
-    const hash_entry_t *entry = hash_iter_next_entry(&iter);
-    while (entry) {
-      convert_json_lists((value_t) entry->value);
-      entry = hash_iter_next_entry(&iter);
-    }
-  }
-}
-
 value_t parse_json(const char *string) {
   lexer_t *lexer = make_lexer(string);
   list_t *tokens = lexer_lex(lexer);
@@ -98,7 +73,6 @@ value_t parse_json(const char *string) {
   }
 
   value_t result = parse_value(tokens);
-  convert_json_lists(result);
 
   if (!list_is_empty(tokens)) {
     who_printf("trailing token after JSON value\n");
@@ -312,13 +286,11 @@ static void write_json_value(buffer_t *buffer, value_t json) {
     write_json_string_escaped(buffer, xtext_string(to_xtext(s)));
   } else if (string_equal(tag, "array-json")) {
     write_string(buffer, "[");
-    value_t list = xarray_get(xs, 1);
-    bool first = true;
-    while (is_cons(list)) {
-      if (!first) write_string(buffer, ", ");
-      write_json_value(buffer, to_cons(list)->car);
-      first = false;
-      list = to_cons(list)->cdr;
+    value_t elements = xarray_get(xs, 1);
+    size_t length = array_length(to_xarray(elements)->elements);
+    for (size_t i = 0; i < length; i++) {
+      if (i > 0) write_string(buffer, ", ");
+      write_json_value(buffer, xarray_get(to_xarray(elements), i));
     }
     write_string(buffer, "]");
   } else if (string_equal(tag, "object-json")) {

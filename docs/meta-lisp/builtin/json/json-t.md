@@ -20,7 +20,7 @@ JSON value type. Represents a parsed JSON value.
   (bool-json    (value bool-t))
   (number-json  (value float-t))
   (text-json  (value text-t))
-  (array-json   (elements (list-t json-t)))
+  (array-json   (elements (array-t json-t)))
   (object-json  (entries (hash-t text-t json-t))))
 ```
 
@@ -45,10 +45,10 @@ JSON value type. Represents a parsed JSON value.
 (claim text-json-value    (-> json-t text-t))
 (claim text-json-put-value (-> text-t json-t json-t))
 
-(claim array-json              (-> (list-t json-t) json-t))
+(claim array-json              (-> (array-t json-t) json-t))
 (claim is-array-json             (-> json-t bool-t))
-(claim array-json-elements     (-> json-t (list-t json-t)))
-(claim array-json-put-elements (-> (list-t json-t) json-t json-t))
+(claim array-json-elements     (-> json-t (array-t json-t)))
+(claim array-json-put-elements (-> (array-t json-t) json-t json-t))
 
 (claim object-json              (-> (hash-t text-t json-t) json-t))
 (claim is-object-json             (-> json-t bool-t))
@@ -63,6 +63,6 @@ JSON value type. Represents a parsed JSON value.
 (bool-json true)
 (number-json 42.0)
 (text-json "hello")
-(array-json (@list (number-json 1.0) (number-json 2.0)))
+(array-json (@array (number-json 1.0) (number-json 2.0)))
 (object-json (@hash "x" (number-json 1.0)))
 ```

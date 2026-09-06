@@ -5,7 +5,7 @@
   (bool-json (value bool-t))
   (number-json (value float-t))
   (text-json (value text-t))
-  (array-json (elements (list-t json-t)))
+  (array-json (elements (array-t json-t)))
   (object-json (entries (hash-t text-t json-t))))
 
 (declare-primitive-function parse-json 1)

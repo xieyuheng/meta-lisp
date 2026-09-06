@@ -49,31 +49,6 @@ static value_t parse_value_zh(list_t *tokens);
 static value_t parse_array_zh(list_t *tokens);
 static value_t parse_object_zh(list_t *tokens);
 
-// convert the internal array builders of array-json to cons lists
-
-static void convert_json_lists_zh(value_t json) {
-  value_t tag = xarray_get(to_xarray(json), 0);
-  if (equal(tag, x_object(intern_symbol("数组结森")))) {
-    value_t elements = xarray_get(to_xarray(json), 1);
-    value_t list = x_array_to_list(elements);
-    xarray_put(to_xarray(json), 1, list);
-    while (is_cons(list)) {
-      convert_json_lists_zh(to_cons(list)->car);
-      list = to_cons(list)->cdr;
-    }
-  } else if (equal(tag, x_object(intern_symbol("对象结森")))) {
-    value_t entries = xarray_get(to_xarray(json), 1);
-    xhash_t *hash = to_xhash(entries);
-    hash_iter_t iter;
-    hash_iter_init(&iter, hash->hash);
-    const hash_entry_t *entry = hash_iter_next_entry(&iter);
-    while (entry) {
-      convert_json_lists_zh((value_t) entry->value);
-      entry = hash_iter_next_entry(&iter);
-    }
-  }
-}
-
 value_t parse_json_zh(const char *string) {
   lexer_t *lexer = make_lexer(string);
   list_t *tokens = lexer_lex(lexer);
@@ -86,7 +61,6 @@ value_t parse_json_zh(const char *string) {
   }
 
   value_t result = parse_value_zh(tokens);
-  convert_json_lists_zh(result);
 
   if (!list_is_empty(tokens)) {
     who_printf("trailing token after JSON value\n");
@@ -261,13 +235,11 @@ static void write_json_value_zh(buffer_t *buffer, value_t json) {
     write_json_string_escaped(buffer, xtext_string(to_xtext(s)));
   } else if (string_equal(tag, "数组结森")) {
     write_string(buffer, "[");
-    value_t list = xarray_get(xs, 1);
-    bool first = true;
-    while (is_cons(list)) {
-      if (!first) write_string(buffer, ", ");
-      write_json_value_zh(buffer, to_cons(list)->car);
-      first = false;
-      list = to_cons(list)->cdr;
+    value_t elements = xarray_get(xs, 1);
+    size_t length = array_length(to_xarray(elements)->elements);
+    for (size_t i = 0; i < length; i++) {
+      if (i > 0) write_string(buffer, ", ");
+      write_json_value_zh(buffer, xarray_get(to_xarray(elements), i));
     }
     write_string(buffer, "]");
   } else if (string_equal(tag, "对象结森")) {

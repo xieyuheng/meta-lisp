@@ -24,7 +24,7 @@
       (hash-map-value
         (lambda (v)
           (let ((arr (array-json-elements v)))
-            (list-map text-json-value arr)))
+            (list-map text-json-value (array-to-list arr))))
         prelude-entries))
     (make-hash)))
 
