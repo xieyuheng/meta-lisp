@@ -11,8 +11,6 @@ import * as X86 from "../../../x86/index.ts"
 import * as X86Backend from "../passes/index.ts"
 
 export function BuildPipeline(rootPkg: M.Package): void {
-  M.CorePipeline(rootPkg)
-
   const basicProgram = X86Backend.ExplicateControlPass(rootPkg)
   B.CopyPropagationPass(basicProgram)
   BasicBundle(rootPkg, basicProgram)

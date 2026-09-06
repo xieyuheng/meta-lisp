@@ -11,8 +11,6 @@ import * as Xvm2 from "../../../xvm/index.ts"
 import * as Xvm2Backend from "../passes/index.ts"
 
 export function BuildPipeline(rootPkg: M.Package): void {
-  M.CorePipeline(rootPkg)
-
   const basicProgram = Xvm2Backend.ExplicateControlPass(rootPkg)
   B.CopyPropagationPass(basicProgram)
   BasicBundle(rootPkg, basicProgram)

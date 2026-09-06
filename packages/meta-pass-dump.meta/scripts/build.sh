@@ -6,8 +6,7 @@ set -e
 
 rm -rf build
 
-./meta-lisp.js build-xvm
-./meta-lisp.js build-x86
+./meta-lisp.js build
 
 ./scripts/sanitize-dump.sh build
 
