@@ -2,5 +2,6 @@
 
 set -e
 
-./meta-lisp.meta build-xvm --config self-meta-package.json
-# ./meta-lisp.meta test
+rm -rf self-snapshot
+
+# ./meta-lisp.meta test-xvm --config self-meta-package.json

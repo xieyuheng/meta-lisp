@@ -2,4 +2,5 @@
 
 set -e
 
+make clean
 make build -j

@@ -2,8 +2,8 @@
 
 set -e
 
-./scripts/prepare.sh
-./scripts/format.sh
-./scripts/check.sh
-./scripts/build.sh
-./scripts/test.sh
+./scripts/stage0.sh
+./scripts/stage1.sh
+./scripts/stage2.sh
+./scripts/stage3.sh
+./scripts/stage4.sh

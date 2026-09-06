@@ -2,7 +2,6 @@
 
 set -e
 
-./meta-lisp.js build-xvm
+rm -rf snapshot
 
 ./meta-lisp.js test-xvm
-./meta-lisp.js build-x86

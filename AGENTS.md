@@ -37,27 +37,16 @@ AI agent 应用中文回答用户的问题。
 
 # 依赖链
 
-1. `pnpm install`（或 `scripts/prepare.sh`）
+1. `pnpm install`
 2. C：[std.c] → [cli.c] → [xrt.c] → [xvm.c] / [x86.c]
 3. JS：[std.js] → [cli.js]/[ppml.js]/[sexp.js] → [meta-lisp.js]
-4. `.meta` 测试依赖 [meta-lisp.js] 二进制
+4. `.meta` 测试依赖 [meta-lisp.js] 编译器
 
-顶层 `scripts/build.sh` 按正确顺序构建。
+顶层 `scripts/all.sh` 按 stage 顺序驱动全部阶段。
 
 # 工作流
 
-所有流程通过脚本驱动。脚本必须在所在目录执行（顶层或 package 根目录）。
-**AI agent 应优先使用脚本**，避免手拼命令。
-
-所有 package 的脚本接口一致（check / build / test / clean）。
-
-从 repo 根目录：
-- `./scripts/prepare.sh` — 安装 JS 依赖
-- `./scripts/clean.sh`   — 清理所有 package
-- `./scripts/format.sh`  — 格式化 JS/TS
-- `./scripts/build.sh`   — type-check JS + 编译 C
-- `./scripts/test.sh`    — 测试所有 package
-- `./scripts/all.sh`     — prepare → clean → format → build → test
+查看项目根目录中的脚本 `./scripts`。
 
 ## C 工作流
 
@@ -70,22 +59,11 @@ AI agent 应用中文回答用户的问题。
 - **不要猜测 API 用法** — 先读对应 module 的 `*.h`，了解公开 API 后再编码
 - **修改前应加载 `scalable-c` skill**
 
-每个 C package 提供：
-- `scripts/build.sh` — 编译 C 源码
-- `scripts/clean.sh` — 清理构建产物
-- `scripts/test.sh`  — 运行测试和 snapshot（GNU parallel 并行）
-
 ## JS/TS 工作流
 
 - Node 原生 test runner（`node --test`），测试与源码同目录（`src/**/*.test.ts`）
 - ESM only，相对 import 必须带 `.ts` 扩展名，Node 内置模块用 `node:` 前缀
 - Prettier 格式化（配置内联在 `package.json`），无 ESLint
-
-每个 JS/TS package 提供：
-- `scripts/check.sh`  — TypeScript type-check
-- `scripts/format.sh` — Prettier 格式化
-- `scripts/test.sh`   — 运行测试（Node 原生 test runner）
-- `scripts/clean.sh`  — 清理 snapshot 输出
 
 ### 编码规范
 
@@ -116,33 +94,21 @@ AI agent 应用中文回答用户的问题。
 ## meta-lisp 工作流
 
 - **meta-lisp 是一门新的 Lisp 方言**，有语法问题应先查阅文档，不要套用其他 Lisp（如 Scheme、Common Lisp）的语法约定
-- 标准流程：check → build → test
-- [meta-lisp.meta] 额外有 `scripts/build.sh`（编译为 xvm 汇编）和 `scripts/self-check.sh`（自举验证）
+- 标准流程：check → build → test（各 `.meta` package 的 scripts 接口以 `packages/*/scripts/` 实际内容为准，如 [meta-error.meta] 无 build）
 - **不要猜测 API 用法** — 优先使用 [meta-builtin.meta] 中已定义的内建函数，需要新函数时再到 `meta-builtin.meta/src/` 下查看声明
 - `meta-error.meta` 的类型错误是**预期输出**，不要误判为 bug
 - **变量名可以用完整单词如 `list`/`hash`/`set`** — meta-lisp 与 Scheme 一样是单一命名空间（Lisp-1），但容器通过 `(@list ...)`、`(@set ...)`、`(@hash ...)` 等 `@` 前缀特殊语法构造，而非函数作用（如 Scheme 的 `(list ...)`），因此这些名字作变量不会遮蔽任何内建构造器。禁止 `lst`/`acc` 等无意义缩写
-
-每个 `.meta` package 提供：
-- `scripts/check.sh` — type-check
-- `scripts/clean.sh` — 清理 build 和 snapshot 产物
-- `scripts/test.sh`  — type-check → build → test
-
-# 完整测试
-
-**改动完成后，必须在 repo 根目录运行 `./scripts/all.sh` 做完整测试**，涵盖 prepare → clean → format → build → test 全部环节。
-
-不要只跑单个 package 的测试就认为改动完成——依赖链（C → JS → .meta）意味着一个 package 的改动可能影响下游。
 
 # 技能指引
 
 Agent 应在对应场景主动加载 skill：
 
-| 场景 | 加载 Skill |
-|---|---|
-| 编写或修改 C 代码 | `scalable-c` |
-| 重构、设计新模块 | `oop-thinking` |
-| 解决复杂问题 | `how-to-solve-it` |
-| 用户提出设计/实现需求 | `design-partner` |
+| 场景                  | 加载 Skill        |
+|-----------------------|-------------------|
+| 编写或修改 C 代码     | `scalable-c`      |
+| 重构、设计新模块      | `oop-thinking`    |
+| 解决复杂问题          | `how-to-solve-it` |
+| 用户提出设计/实现需求 | `design-partner`  |
 
 # 设计原则
 

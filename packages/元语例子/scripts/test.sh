@@ -2,9 +2,7 @@
 
 set -e
 
-./meta-lisp.js build-xvm
+rm -rf snapshot
 
 ./meta-lisp.js test-xvm
 ./scripts/test-cli.sh > scripts/test-cli.sh.out
-
-./meta-lisp.js build-x86

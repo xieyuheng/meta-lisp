@@ -2,5 +2,4 @@
 
 set -e
 
-rm -rf build snapshot
-rm -rf self-build self-snapshot
+rm -rf self-build
