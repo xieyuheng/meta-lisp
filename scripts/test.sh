@@ -2,28 +2,29 @@
 
 set -e
 
-cd packages/std.js; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/cli.js; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/sexp.js; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/ppml.js; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
+./scripts/run-in.sh std.js clean.sh test.sh
+./scripts/run-in.sh cli.js clean.sh test.sh
+./scripts/run-in.sh sexp.js clean.sh test.sh
+./scripts/run-in.sh ppml.js clean.sh test.sh
 
-cd packages/std.c; ./scripts/test.sh; cd ../..
-cd packages/cli.c; ./scripts/test.sh; cd ../..
-cd packages/xrt.c; ./scripts/test.sh; cd ../..
-cd packages/xvm.c; ./scripts/test.sh; cd ../..
-cd packages/x86.c; ./scripts/test.sh; cd ../..
+./scripts/run-in.sh std.c test.sh
+./scripts/run-in.sh cli.c test.sh
+./scripts/run-in.sh xrt.c test.sh
+./scripts/run-in.sh xvm.c test.sh
+./scripts/run-in.sh x86.c test.sh
 
-cd packages/meta-lisp.js; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
+# meta-lisp.js 的测试驱动 x86.c 产物，须排在 C 之后
+./scripts/run-in.sh meta-lisp.js clean.sh test.sh
 
-cd packages/meta-builtin.meta; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/meta-math.meta; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/cli.meta; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/命令行; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/元语数学; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/元语例子; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/meta-example.meta; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/meta-error.meta; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/meta-lisp.meta; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
-cd packages/meta-pass-dump.meta; ./scripts/clean.sh; ./scripts/test.sh; cd ../..
+./scripts/run-in.sh meta-builtin.meta clean.sh test.sh
+./scripts/run-in.sh meta-math.meta clean.sh test.sh
+./scripts/run-in.sh cli.meta clean.sh test.sh
+./scripts/run-in.sh 命令行 clean.sh test.sh
+./scripts/run-in.sh 元语数学 clean.sh test.sh
+./scripts/run-in.sh 元语例子 clean.sh test.sh
+./scripts/run-in.sh meta-example.meta clean.sh test.sh
+./scripts/run-in.sh meta-error.meta clean.sh test.sh
+./scripts/run-in.sh meta-lisp.meta clean.sh test.sh
+./scripts/run-in.sh meta-pass-dump.meta clean.sh test.sh
 
-cd packages/meta-lisp.meta; ./scripts/self-test.sh; cd ../..
+./scripts/run-in.sh meta-lisp.meta self-test.sh

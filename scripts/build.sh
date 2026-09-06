@@ -2,8 +2,8 @@
 
 set -e
 
-cd packages/std.c; ./scripts/clean.sh; ./scripts/build.sh; cd ../..
-cd packages/cli.c; ./scripts/clean.sh; ./scripts/build.sh; cd ../..
-cd packages/xrt.c; ./scripts/clean.sh; ./scripts/build.sh; cd ../..
-cd packages/xvm.c; ./scripts/clean.sh; ./scripts/build.sh; cd ../..
-cd packages/x86.c; ./scripts/clean.sh; ./scripts/build.sh; cd ../..
+./scripts/run-in.sh std.c clean.sh build.sh
+./scripts/run-in.sh cli.c clean.sh build.sh
+./scripts/run-in.sh xrt.c clean.sh build.sh
+./scripts/run-in.sh xvm.c clean.sh build.sh
+./scripts/run-in.sh x86.c clean.sh build.sh

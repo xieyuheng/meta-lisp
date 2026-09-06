@@ -2,8 +2,8 @@
 
 set -e
 
-cd packages/std.js; ./scripts/format.sh; cd ../..
-cd packages/cli.js; ./scripts/format.sh; cd ../..
-cd packages/sexp.js; ./scripts/format.sh; cd ../..
-cd packages/ppml.js; ./scripts/format.sh; cd ../..
-cd packages/meta-lisp.js; ./scripts/format.sh; cd ../..
+./scripts/run-in.sh std.js format.sh
+./scripts/run-in.sh cli.js format.sh
+./scripts/run-in.sh sexp.js format.sh
+./scripts/run-in.sh ppml.js format.sh
+./scripts/run-in.sh meta-lisp.js format.sh
