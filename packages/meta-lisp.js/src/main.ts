@@ -24,7 +24,6 @@ router.defineRoutes([
   "check --config --dump",
   "build --config --dump",
   "basic:format <input>",
-  "xvm:test --config",
   "xvm:format <input>",
   "xvm:info <input>",
   "xvm:assemble <input> <output>",
@@ -52,14 +51,6 @@ router.defineHandlers({
     M.CorePipeline(pkg)
     XvmBackend.BuildPipeline(pkg)
     X86Backend.BuildPipeline(pkg)
-  },
-
-  "xvm:test": ({ options }) => {
-    const configPath =
-      options["--config"] || Path.join(process.cwd(), "meta-package.json")
-    const pkg = M.loadPackage("self", configPath)
-    M.validateCompilerOptions(pkg.config.compiler)
-    XvmBackend.TestPipeline(pkg)
   },
 
   "basic:format": ({ args: [input] }) => {

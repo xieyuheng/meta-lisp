@@ -4,5 +4,5 @@ set -e
 
 rm -rf snapshot
 
-./bin/meta-lisp.js xvm:test
+./bin/xvm test build/bundle.xvm.exe
 ./scripts/test-cli.sh > scripts/test-cli.sh.out

@@ -4,4 +4,4 @@ set -e
 
 rm -rf self-snapshot
 
-# ./bin/meta-lisp.meta xvm:test --config self-meta-package.json
+# ./bin/xvm test build/bundle.xvm.exe
